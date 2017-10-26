@@ -50,7 +50,7 @@
             self.loading = true;
             Project.getRequesterProjects().then(
                 function success(response) {
-                    self.myProjects = response[0];
+                    self.myProjects = response[0].results;
                     initializeWebSocket();
                 },
                 function error(response) {

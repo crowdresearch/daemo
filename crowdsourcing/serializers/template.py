@@ -33,7 +33,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Template
         fields = ('id', 'name', 'items')
-        read_only_fields = ('items', 'name')
+        read_only_fields = ('items',)
 
     def create(self, with_defaults, is_review, *args, **kwargs):
         items = self.validated_data.pop('items') if 'items' in self.validated_data else []

@@ -22,15 +22,19 @@ from mturk import views as mturk_views
 from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountViewSet
 
 router = SimpleRouter(trailing_slash=True)
+router.register(r'projects', ProjectViewSet)
+router.register(r'tasks', TaskViewSet)
+router.register(r'assignments', TaskWorkerViewSet)
+
 router.register(r'profile', UserProfileViewSet)
 router.register(r'user', UserViewSet)
 router.register(r'preferences', UserPreferencesViewSet)
 router.register(r'worker-requester-rating', WorkerRequesterRatingViewset)
 router.register(r'rating', RatingViewset)
-router.register(r'project', ProjectViewSet)
+
 router.register(r'country', CountryViewSet)
 router.register(r'city', CityViewSet)
-router.register(r'task', TaskViewSet)
+
 router.register(r'task-worker', TaskWorkerViewSet)
 router.register(r'task-worker-result', TaskWorkerResultViewSet)
 router.register(r'template', TemplateViewSet)
@@ -60,8 +64,10 @@ urlpatterns = [
     url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/done/$', csrf_exempt(ExternalSubmit.as_view())),
+    url(r'^v1/done/$', csrf_exempt(ExternalSubmit.as_view())),
     url(r'^api/external-tasks/$', csrf_exempt(ExternalSubmit.as_view())),
     url(r'^api/', include(router.urls)),
+    url(r'^v1/', include(router.urls)),
     url(r'^mturk/task', mturk_views.mturk_index),
     url(r'^api/', include(mturk_router.urls)),
     url(r'^api/mturk/url', MTurkConfig.as_view({'get': 'get_mturk_url'})),

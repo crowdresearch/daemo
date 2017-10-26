@@ -1,0 +1,128 @@
+<div class="layout-row">
+    <div class="_main-docs">
+        <div style="padding: 32px; padding-top: 44px">
+            <h1>Templates</h1>
+            <div>These are the project templates which are used to render tasks.</div>
+            <h2>Resource definition</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"id"</span>: integer, <br/>
+                    <span>"name"</span>: string,<br/>
+                    <span>"items"</span>: [],<br/>
+                    <span>"created_at"</span>: string,<br/>
+                    <span>"updated_at"</span>: string
+                </div>
+                {{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Templates: list</h1>
+            <div>Lists the templates that you own.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/templates/</div>
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"count"</span>: integer, <br/>
+                    <span>"next"</span>: string,<br/>
+                    <span>"previous"</span>: string,<br/>
+                    <span>"results"</span>: [<br/>
+                    <div style="padding-left: 24px; color: blue; font-weight: 500">Template Resource</div>
+                    ]
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>count</td>
+                        <td>integer</td>
+                        <td>The number of templates that this user owns.</td>
+                    </tr>
+                    <tr>
+                        <td>next</td>
+                        <td>string</td>
+                        <td>URL to fetch next page.</td>
+                    </tr>
+                    <tr>
+                        <td>previous</td>
+                        <td>string</td>
+                        <td>URL to fetch previous page.</td>
+                    </tr>
+                    <tr>
+                        <td>results [ ]</td>
+                        <td>list</td>
+                        <td>The list of the templates.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Templates: retrieve</h1>
+            <div>Retrieve a template by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/templates/<span>templateId</span>/
+            </div>
+            <h2>Response</h2>
+            <div>
+                This method will return a <span style="color: blue; font-weight: 500">Template Resource</span>.
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Templates: create</h1>
+            <div>Create a new template.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/templates/
+            </div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"name"</span>: json object, <br/>
+                    <span>"items"</span>: [], <br/>
+
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>name</td>
+                        <td>string</td>
+                        <td>A name for this template.</td>
+                    </tr>
+                    <tr>
+                        <td>items</td>
+                        <td>list of TemplateItem Resource</td>
+                        <td>List of template Items which are part of this template.
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">{{ '{' }}<span>"id"</span>: integer{{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+
+        </div>
+    </div>
+    <div docs-navigation class="_docs-nav"></div>
+</div>

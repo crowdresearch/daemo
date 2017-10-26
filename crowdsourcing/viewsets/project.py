@@ -10,13 +10,14 @@ from crowdsourcing.discourse import DiscourseClient
 from django.db import connection
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect
+from rest_framework import mixins
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from yapf.yapflib.yapf_api import FormatCode
 
-from crowdsourcing.models import Category, Project, Task, TaskWorker
+from crowdsourcing.models import Category, Project, Task, TaskWorker, TaskWorkerResult
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
@@ -26,14 +27,25 @@ from crowdsourcing.validators.project import validate_account_balance
 from mturk.tasks import mturk_disable_hit
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin,
+                     mixins.ListModelMixin,
+                     viewsets.GenericViewSet):
     queryset = Project.objects.active()
     serializer_class = ProjectSerializer
     pagination_class = SmallResultsSetPagination
     permission_classes = [IsProjectOwnerOrCollaborator, IsAuthenticated, ProjectChangesAllowed]
 
-    def create(self, request, with_defaults=True, *args, **kwargs):
-        serializer = ProjectSerializer(
+    def list(self, request, *args, **kwargs):
+        account_type = request.query_params.get('account_type', 'worker')
+        if account_type == 'worker':
+            return self.worker_projects(request, args, kwargs)
+        elif account_type == 'requester':
+            return self.requester_projects(request, args, kwargs)
+        return Response([])
+
+    def create(self, request, *args, **kwargs):
+        with_defaults = request.query_params.get('with_defaults', False)
+        serializer = self.serializer_class(
             data=request.data,
             fields=('name', 'price', 'post_mturk', 'repetition', 'template'),
             context={'request': request}
@@ -45,7 +57,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
                 serializer = ProjectSerializer(
                     instance=project,
-                    fields=('id', 'name'),
+                    fields=('id', 'name', 'template_id'),
                     context={'request': request}
                 )
 
@@ -55,11 +67,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['post'], url_path='create-full')
     def create_full(self, request, *args, **kwargs):
-        price = request.data.get('price')
-        post_mturk = request.data.get('post_mturk', False)
-        repetition = request.data.get('repetition', 1)
-        if not post_mturk:
-            validate_account_balance(request, int(price * 100) * repetition)
+        # price = request.data.get('price')
+        # repetition = request.data.get('repetition', 1)
+        # validate_account_balance(request, int(price * 100) * repetition)
         return self.create(request=request, with_defaults=False, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
@@ -265,6 +275,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'], url_path='for-workers')
     def worker_projects(self, request, *args, **kwargs):
+        group_by = request.query_params.get('group_by', '-')
         # noinspection SqlResolve
         query = '''
             SELECT
@@ -347,15 +358,23 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                                'payout_available_by', 'paid_count',
                                                'expected_payout_amount', 'amount_paid'),
                                        context={'request': request})
-        response_data = {
-            "in_progress": [],
-            "completed": [],
-        }
-        for p in serializer.data:
-            if p['returned'] > 0 or p['in_progress'] > 0:
-                response_data['in_progress'].append(p)
-            elif p['completed'] > 0 or p['awaiting_review'] > 0:
-                response_data['completed'].append(p)
+        if group_by == 'status':
+            response_data = {
+                "in_progress": [],
+                "completed": [],
+            }
+            for p in serializer.data:
+                if p['returned'] > 0 or p['in_progress'] > 0:
+                    response_data['in_progress'].append(p)
+                elif p['completed'] > 0 or p['awaiting_review'] > 0:
+                    response_data['completed'].append(p)
+        else:
+            response_data = {
+                "count": len(serializer.data),
+                "next": None,
+                "previous": None,
+                "results": serializer.data
+            }
         return Response(data=response_data, status=status.HTTP_200_OK)
 
     @list_route(methods=['GET'], url_path='for-requesters')
@@ -415,12 +434,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})
         serializer = ProjectSerializer(instance=projects, many=True,
-                                       fields=('id', 'group_id', 'name', 'age', 'total_tasks', 'in_progress',
+                                       fields=('id', 'group_id', 'name', 'total_tasks', 'in_progress',
                                                'completed', 'awaiting_review', 'checked_out', 'status', 'price',
-                                               'hash_id',
+                                               'hash_id', 'min_rating', 'repetition', 'published_at',
                                                'revisions', 'updated_at', 'discussion_link'),
                                        context={'request': request})
-        return Response(serializer.data)
+        return Response({"count": len(serializer.data), "next": None, "previous": None, "results": serializer.data})
 
     @detail_route(methods=['get'], url_path='status')
     def status(self, request, *args, **kwargs):
@@ -1209,3 +1228,26 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status__in=[TaskWorker.STATUS_RETURNED, TaskWorker.STATUS_ACCEPTED, TaskWorker.STATUS_SUBMITTED],
             task__project__group_id=project.group_id).values_list('worker__profile__handle', flat=True)
         return Response(workers)
+
+    @detail_route(methods=['get'], url_path='tasks')
+    def tasks(self, request, *args, **kwargs):
+        tasks = self.get_object().tasks.all()
+
+        return Response({
+            "count": tasks.count(),
+            "next": None,
+            "previous": None,
+            "results": TaskSerializer(instance=tasks, many=True,
+                                      fields=('id', 'group_id', 'data', 'hash', 'project',
+                                              'created_at', 'price', 'row_number')).data
+        })
+
+    @detail_route(methods=['get'], url_path='assignment-results')
+    def assignment_results(self, request, pk, *args, **kwargs):
+        results = TaskWorkerResult.objects.filter(task_worker__task__project_id=pk)
+        response_data = TaskWorkerResultSerializer(instance=results,
+                                                   many=True,
+                                                   fields=('id', 'template_item', 'result',
+                                                           'created_at', 'updated_at', 'attachment',
+                                                           'assignment_id')).data
+        return Response(response_data)

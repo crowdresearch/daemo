@@ -1,0 +1,184 @@
+<div class="layout-row">
+    <div class="_main-docs">
+        <div style="padding: 32px; padding-top: 44px">
+            <h1>Tasks</h1>
+            <div>Data entries which are used to populate the project template.</div>
+            <h2>Resource definition</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"id"</span>: integer, <br/>
+                    <span>"group_id"</span>: integer, <br/>
+                    <span>"hash"</span>: string,<br/>
+                    <span>"data"</span>: json object,<br/>
+                    <span>"price"</span>: float,<br/>
+                    <span>"created_at"</span>: string,<br/>
+                    <span>"updated_at"</span>: string
+                </div>
+                {{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Tasks: list</h1>
+            <div>Lists the projects by project.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/tasks/</div>
+            <h2>Request Parameters</h2>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>project_id</td>
+                        <td>integer</td>
+                        <td>Project ID to fetch the tasks for.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"count"</span>: integer, <br/>
+                    <span>"next"</span>: string,<br/>
+                    <span>"previous"</span>: string,<br/>
+                    <span>"results"</span>: [<br/>
+                    <div style="padding-left: 24px; color: blue; font-weight: 500">Task Resource</div>
+                    ]
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>count</td>
+                        <td>integer</td>
+                        <td>The number of tasks belonging to this project.</td>
+                    </tr>
+                    <tr>
+                        <td>next</td>
+                        <td>string</td>
+                        <td>URL to fetch next page.</td>
+                    </tr>
+                    <tr>
+                        <td>previous</td>
+                        <td>string</td>
+                        <td>URL to fetch previous page.</td>
+                    </tr>
+                    <tr>
+                        <td>results [ ]</td>
+                        <td>list</td>
+                        <td>The list of tasks.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Tasks: retrieve</h1>
+            <div>Retrieve a task by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/tasks/<span>taskId</span>/
+            </div>
+            <h2>Response</h2>
+            <div>
+                This method will return a <span style="color: blue; font-weight: 500">Task Resource</span>.
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Tasks: create</h1>
+            <div>Create a new task.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/tasks/?project_id={PROJECT_ID}
+            </div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"data"</span>: json object, <br/>
+                    <span>"price"</span>: float <br/>
+
+
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>data</td>
+                        <td>json object</td>
+                        <td>The data which will be used in the template to render the task.</td>
+                    </tr>
+                    <tr>
+                        <td>price</td>
+                        <td>float</td>
+                        <td>Optional: Price for this specific task, only relevant if custom pricing is used, otherwise
+                            Project.price
+                            will be used.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>project_id as url parameter</td>
+                        <td>integer</td>
+                        <td>Id of the project which this task is being created for.
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">{{ '{' }}<span>"id"</span>: integer{{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Tasks: destroy</h1>
+            <div>Delete a task by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">DELETE /v1/tasks/<span>taskId</span>/</div>
+            <h2>Response</h2>
+            <div>The response for this request will be empty.</div>
+
+            <div class="_divider">&nbsp;</div>
+            <h1>Tasks: results</h1>
+            <div>Get all the assignment results for this task.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/tasks/<span>taskID</span>/assignment-results/</div>
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"count"</span>: integer, <br/>
+                    <span>"next"</span>: string,<br/>
+                    <span>"previous"</span>: string,<br/>
+                    <span>"results"</span>: [<br/>
+                    <div style="padding-left: 24px; color: blue; font-weight: 500">Assignment Resource</div>
+                    ]
+                </div>
+                {{ '}' }}
+
+            </div>
+
+        </div>
+    </div>
+    <div docs-navigation class="_docs-nav"></div>
+</div>

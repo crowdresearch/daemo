@@ -49,13 +49,14 @@ class TaskWorkerResultListSerializer(serializers.ListSerializer):
 class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
     result = serializers.JSONField(allow_null=True)
     key = serializers.SerializerMethodField()
+    assignment_id = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TaskWorkerResult
         validators = [ItemValidator()]
         list_serializer_class = TaskWorkerResultListSerializer
-        fields = ('id', 'template_item', 'result', 'key', 'created_at', 'updated_at', 'attachment')
-        read_only_fields = ('created_at', 'updated_at', 'key')
+        fields = ('id', 'template_item', 'result', 'key', 'created_at', 'updated_at', 'attachment', 'assignment_id')
+        read_only_fields = ('created_at', 'updated_at', 'key', 'assignment_id')
 
     def create(self, **kwargs):
         return models.TaskWorkerResult.objects.get_or_create(kwargs.get('validated_data', self.validated_data))
@@ -64,6 +65,9 @@ class TaskWorkerResultSerializer(DynamicFieldsModelSerializer):
         if obj is not None and obj.template_item is not None:
             return obj.template_item.name
         return None
+
+    def get_assignment_id(self, obj):
+        return obj.task_worker_id
 
 
 class TaskWorkerSerializer(DynamicFieldsModelSerializer):
@@ -358,9 +362,9 @@ class TaskSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'project', 'deleted_at', 'created_at', 'updated_at', 'data',
                   'task_workers', 'template', 'project_data',
                   'has_comments', 'comments', 'worker_count',
-                  'completed', 'total', 'row_number', 'rerun_key', 'batch', 'price')
+                  'completed', 'total', 'row_number', 'rerun_key', 'batch', 'price', 'hash', 'group_id')
         read_only_fields = ('created_at', 'updated_at', 'deleted_at', 'has_comments', 'comments', 'project_data',
-                            'row_number', 'batch', 'price')
+                            'row_number', 'batch', 'price', 'hash', 'group_id')
 
     def create(self, **kwargs):
         data = self.validated_data.pop('data', {})

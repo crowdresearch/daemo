@@ -1,0 +1,225 @@
+<div class="layout-row">
+    <div class="_main-docs">
+        <div style="padding: 32px; padding-top: 44px">
+            <h1>Assignments</h1>
+            <div>Also known as TaskWorkers</div>
+            <h2>Resource definition</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"id"</span>: integer, <br/>
+                    <span>"status"</span>: string,<br/>
+                    <span>"worker"</span>: integer,<br/>
+                    <span>"worker_alias"</span>: string,<br/>
+                    <span>"price"</span>: float,<br/>
+                    <span>"submitted_at"</span>: string,<br/>
+                    <span>"approved_at"</span>: string,<br/>
+                    <span>"created_at"</span>: string,<br/>
+                    <span>"updated_at"</span>: string
+                </div>
+                {{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Assignments: list</h1>
+            <div>Lists the assignments by task.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/assignments/</div>
+            <h2>Request Parameters</h2>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>task_id</td>
+                        <td>integer</td>
+                        <td>Task ID to fetch the assignments for.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"count"</span>: integer, <br/>
+                    <span>"next"</span>: string,<br/>
+                    <span>"previous"</span>: string,<br/>
+                    <span>"results"</span>: [<br/>
+                    <div style="padding-left: 24px; color: blue; font-weight: 500">Assignment Resource</div>
+                    ]
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>count</td>
+                        <td>integer</td>
+                        <td>The number of assignments that were submitted for this project.</td>
+                    </tr>
+                    <tr>
+                        <td>next</td>
+                        <td>string</td>
+                        <td>URL to fetch next page.</td>
+                    </tr>
+                    <tr>
+                        <td>previous</td>
+                        <td>string</td>
+                        <td>URL to fetch previous page.</td>
+                    </tr>
+                    <tr>
+                        <td>results [ ]</td>
+                        <td>list</td>
+                        <td>The list of assignments submitted by workers.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Assignments: retrieve</h1>
+            <div>Retrieve an assignment by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/assignments/<span>assignmentId</span>/
+            </div>
+            <h2>Response</h2>
+            <div>
+                This method will return an <span style="color: blue; font-weight: 500">Assignment Resource</span>.
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Assignments: approve</h1>
+            <div>Approve an assignment by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/assignments/<span>assignmentId</span>/approve/
+            </div>
+            <h2>Request Data</h2>
+            <div>
+                None
+            </div>
+
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Assignments: return</h1>
+            <div>Return an assignment for revision by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/assignments/<span>assignmentId</span>/return/
+            </div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"feedback"</span>: string
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>feedback</td>
+                        <td>string</td>
+                        <td>Revision feedback which will be sent to the worker.</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{}' }}
+            </div>
+
+
+            <div class="_divider">&nbsp;</div>
+            <h1>Assignments: reject</h1>
+            <div>Reject an assignment for revision by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/assignments/<span>assignmentId</span>/reject/
+            </div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"reason"</span>: string
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>reason</td>
+                        <td>string</td>
+                        <td>Reason for rejecting this assignment.</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{}' }}
+            </div>
+            <!--h1>Assignments: destroy</h1>
+            <div>Skips an assignment by ID.</div>
+            <h2>Request</h2>
+            <div class="_snippet">DELETE /v1/assignments/<span>assignmentId</span>/</div>
+            <h2>Response</h2>
+            <div>The response for this request will be empty.</div>
+
+            <div class="_divider">&nbsp;</div>
+            <h1>Tasks: results</h1>
+            <div>Get all the assignment results for this task.</div>
+            <h2>Request</h2>
+            <div class="_snippet">GET /v1/tasks/<span>taskID</span>/assignment-results/</div>
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"count"</span>: integer, <br/>
+                    <span>"next"</span>: string,<br/>
+                    <span>"previous"</span>: string,<br/>
+                    <span>"results"</span>: [<br/>
+                    <div style="padding-left: 24px; color: blue; font-weight: 500">Assignment Resource</div>
+                    ]
+                </div>
+                {{ '}' }}
+
+            </div-->
+
+        </div>
+    </div>
+    <div docs-navigation class="_docs-nav"></div>
+</div>

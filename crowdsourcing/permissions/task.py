@@ -20,7 +20,7 @@ class HasExceededReservedLimit(permissions.BasePermission):
 
 class IsTaskOwner(permissions.BasePermission):
     def has_permission(self, request, view):
-        task_id = request.data.get('task_id')
+        task_id = view.kwargs.get('pk', request.data.get('task_id'))
         task = Task.objects.prefetch_related('project__owner').filter(id=task_id).first()
         if task is None:
             return True

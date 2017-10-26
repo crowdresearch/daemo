@@ -1,0 +1,75 @@
+<div class="layout-row">
+    <div class="_main-docs">
+        <div style="padding: 32px; padding-top: 44px">
+            <h1>OAuth2 Authentication</h1>
+            <div>Daemo supports authentication via Oauth2 for all REST API calls.</div>
+            <h2>How to get the tokens</h2>
+            <div>
+                Download the tokens as JSON by navigating to your Daemo Profile and clicking "Get Credentials" under the
+                <md-icon md-font-set="material-icons">more_vert</md-icon>
+                menu.
+            </div>
+            <div class="_divider">&nbsp;</div>
+
+            <h2>How authenticate when making API calls</h2>
+            <div>
+                Set the HTTP header "Authorization" to "Bearer <span style="font-weight: 500">your_access_token</span>".
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>OAuth2: refresh_token</h1>
+            <div>Use an existing valid refresh_token to get a new access_token.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /api/oauth2-ng/token/</div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"client_id"</span>: string, <br/>
+                    <span>"grant_type"</span>: "refresh_token",<br/>
+                    <span>"refresh_token"</span>: string,<br/>
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>client_id</td>
+                        <td>string</td>
+                        <td>Client ID from the file initially downloaded from Daemo.</td>
+                    </tr>
+                    <tr>
+                        <td>grant_type</td>
+                        <td>string</td>
+                        <td>Always use "refresh_token".</td>
+                    </tr>
+                    <tr>
+                        <td>refresh_token</td>
+                        <td>string</td>
+                        <td>A valid refresh_token.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Response</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"access_token"</span>: string, <br/>
+                    <span>"refresh_token"</span>: string<br/>
+                </div>
+                {{ '}' }}
+            </div>
+
+        </div>
+    </div>
+    <div docs-navigation class="_docs-nav"></div>
+</div>
