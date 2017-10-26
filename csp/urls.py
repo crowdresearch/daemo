@@ -64,6 +64,7 @@ urlpatterns = [
     url(r'^api/oauth2-ng/token', views.Oauth2TokenView.as_view()),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/done/$', csrf_exempt(ExternalSubmit.as_view())),
+    url(r'^v1/done/$', csrf_exempt(ExternalSubmit.as_view())),
     url(r'^api/external-tasks/$', csrf_exempt(ExternalSubmit.as_view())),
     url(r'^api/', include(router.urls)),
     url(r'^v1/', include(router.urls)),
