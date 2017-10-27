@@ -901,7 +901,7 @@ def update_feed_boomerang():
           INNER JOIN get_min_project_ratings() ratings ON ratings.project_id = p.id
           INNER JOIN get_worker_ratings(worker_id) worker_ratings
             ON worker_ratings.requester_id = p.owner_id
-             AND coalesce(worker_ratings.worker_rating, 1.99) >= ratings.min_rating
+             AND (coalesce(worker_ratings.worker_rating, 1.99) >= ratings.min_rating or p.enable_boomerang is FALSE)
           LEFT OUTER JOIN crowdsourcing_WorkerProjectNotification n
             ON n.project_id = p.group_id AND n.worker_id = t_count.worker_id
           INNER JOIN auth_user u ON u.id = t_count.worker_id

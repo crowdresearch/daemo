@@ -28,11 +28,11 @@
                         <md-icon md-font-set="material-icons">trending_up</md-icon>
                         PRIORITY
                     </div>
-                    <div ng-class="{current: review.resolvedData.min_rating <= 2}">
+                    <div ng-class="{current: review.resolvedData.min_rating <= 2 || review.resolvedData.enable_boomerang===false}">
                         <md-icon md-font-set="material-icons">trending_flat</md-icon>
                         NORMAL
                     </div>
-                    <div ng-class="{current: review.resolvedData.min_rating < 1.99}">
+                    <div ng-class="{current: review.resolvedData.min_rating < 1.99 || review.resolvedData.enable_boomerang===false}">
                         <md-icon md-font-set="material-icons">trending_down</md-icon>
                         LATE
                     </div>
