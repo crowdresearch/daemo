@@ -233,18 +233,16 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
 
         with transaction.atomic():
             instance = self.queryset.select_for_update().filter(**filter_by).order_by('-id').first()
-            # if num_rows > 0:
+            # prototype task
+            # if instance.is_prototype and instance.published_at is None:
+            #     prototype_repetition = int(math.floor(math.sqrt(instance.repetition)))
+            #     num_rows = int(math.floor(math.sqrt(instance.tasks.all().count())))
+            #     instance.aux_attributes['repetition'] = instance.repetition
+            #     instance.aux_attributes['number_of_tasks'] = instance.tasks.count()
+            #     instance.save()
             #     instance.tasks.filter(row_number__gt=num_rows).delete()
-            if instance.is_prototype and instance.published_at is None:
-                prototype_repetition = int(math.floor(math.sqrt(instance.repetition)))
-                num_rows = int(math.floor(math.sqrt(instance.tasks.all().count())))
-                instance.aux_attributes['repetition'] = instance.repetition
-                instance.aux_attributes['number_of_tasks'] = instance.tasks.count()
-                instance.save()
-                instance.tasks.filter(row_number__gt=num_rows).delete()
-                instance.repetition = prototype_repetition
-                instance.save()
-                # return Response({}, status=status.HTTP_400_BAD_REQUEST)
+            #     instance.repetition = prototype_repetition
+            #     instance.save()
             data = copy.copy(request.data)
             data["status"] = Project.STATUS_IN_PROGRESS
 
