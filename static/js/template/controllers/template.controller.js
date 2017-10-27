@@ -1,8 +1,3 @@
-/**
- * TaskFeedController
- * @namespace crowdsource.template.controllers
- * @author dmorina
- */
 (function () {
     'use strict';
 
@@ -25,7 +20,6 @@
         self.copy = copy;
         self.removeItem = removeItem;
         self.addComponent = addComponent;
-        self.showTaskDesign = showTaskDesign;
         self.getIcon = getIcon;
         self.addOption = addOption;
         self.removeOption = removeOption;
@@ -85,7 +79,7 @@
         function copy(item) {
             deselect(item);
             var component = _.find(self.templateComponents, function (component) {
-                return component.type == item.type
+                return component.type === item.type
             });
 
             var field = angular.copy(component);
@@ -94,6 +88,7 @@
             field.name = ''; //'item' + curId;
             field.aux_attributes = item.aux_attributes;
             field.required = item.required;
+            field.predecessor = item.id;
             var index = self.items.indexOf(item);
             addComponent(field, true, index);
             return false;
@@ -101,9 +96,12 @@
 
         function removeItem(item) {
             var index = self.items.indexOf(item);
+            if (index + 2 <= self.items.length) {
+                self.items[index + 1].predecessor = item.predecessor;
+            }
             self.items.splice(index, 1);
             self.selectedItem = null;
-            resetItemPosition();
+            // resetItemPosition();
             Template.deleteItem(item.id).then(
                 function success(response) {
 
@@ -122,20 +120,20 @@
             }
         }
 
-      $scope.$watch('task.progressPercentage', function(newValue, oldValue) {
-        if(!angular.equals(newValue, oldValue)) {
-          self.progressPercentage = newValue;
-        }
-      });
+        $scope.$watch('task.progressPercentage', function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                self.progressPercentage = newValue;
+            }
+        });
 
         $scope.$watch('project.project', function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('template')
-                && self.items && self.items.length == 0) {
-                self.items = newValue.template.items;
+                && self.items && self.items.length === 0) {
+                self.items = sortItems(newValue.template.items);
                 self.saveMessage = $scope.project.saveMessage;
             }
             if (!angular.equals(newValue, oldValue) && newValue.hasOwnProperty('batch_files')) {
-                if (newValue.batch_files.length == 1) {
+                if (newValue.batch_files.length === 1) {
                     self.headers = newValue.batch_files[0].column_headers;
                 }
                 else {
@@ -149,6 +147,7 @@
                 self.selectedItem = newValue;
             }
         }, true);
+
         function addComponent(component, copy, index) {
 
             if (self.selectedItem && self.selectedItem.hasOwnProperty('isSelected')) {
@@ -168,6 +167,10 @@
                 // field.required = true;
                 angular.extend(field, {position: index + 1});
             }
+            if (self.items.length > 0 && !copy) {
+                field.predecessor = self.items[self.items.length - 1].id;
+            }
+
 
             Template.addItem(field).then(
                 function success(response) {
@@ -188,7 +191,6 @@
             ).finally(function () {
             });
 
-            //sync();
         }
 
 
@@ -196,79 +198,16 @@
             return '' + ++idGenIndex;
         }
 
-        function generateRandomTemplateName() {
-            var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            var random = _.sample(possible, 8).join('');
-            return 'template_' + random;
-        }
-
-        function sync() {
-            $scope.project.template = {
-                name: self.templateName,
-                items: self.items
-            }
-        }
-
-        //Show Modal Pop-up of the Task Design Output
-        function showTaskDesign(previewButton) {
-            update_item_data();
-
-            $mdDialog.show({
-                template: '<md-dialog class="centered-dialog" aria-label="preview">' +
-                '<md-dialog-content md-scroll-y>' +
-                '<div layout-margin>' +
-                '<h3><span ng-bind="project.project.name"></span></h3>' +
-                '<md-divider></md-divider>' +
-                '<p ng-bind="project.taskDescription"></p>' +
-                '</div>' +
-                '<md-list class="no-decoration-list">' +
-                '   <md-list-item class="template-item" ng-repeat="item in template.items_with_data">' +
-                '       <div layout="row" flex="100">' +
-                '           <div flex="85" style="outline:none">' +
-                '               <div md-template-compiler="item" style="cursor: default" editor="false"></div>' +
-                '           </div>' +
-                '       </div>' +
-                '   </md-list-item>' +
-                '</md-list>' +
-                '</md-dialog-content>' +
-                '</md-dialog>',
-                parent: angular.element(document.body),
-                scope: $scope,
-                targetEvent: previewButton,
-                preserveScope: true,
-                clickOutsideToClose: true
-            });
-        }
 
         function replaceAll(find, replace, str) {
             return str.replace(new RegExp(find, 'g'), replace);
         }
 
-        function update_item_data() {
-            angular.copy(self.items, self.items_with_data);
-            self.items_with_data = _.map(self.items_with_data, function (obj) {
-
-                if ($scope.project.project.metadata && $scope.project.project.batch_files[0].hasOwnProperty("column_headers")) {
-                    angular.forEach($scope.project.project.batch_files[0].column_headers, function (header) {
-                        var search = header.slice(1, header.length - 1);
-
-                        obj.label = replaceAll(header, $scope.project.project.batch_files[0].firs_row[search], obj.label);
-                        obj.values = replaceAll(header, $scope.project.project.batch_files[0].firs_row[search], obj.values);
-                    });
-                }
-
-                // this will trigger recompiling of template
-                delete obj.isSelected;
-
-                return obj;
-            });
-        }
-
 
         function getIcon(item_type, index) {
-            if (item_type == 'checkbox') return 'check_box_outline_blank';
-            else if (item_type == 'radio') return 'radio_button_unchecked';
-            else if (item_type == 'select') return index + '.';
+            if (item_type === 'checkbox') return 'check_box_outline_blank';
+            else if (item_type === 'radio') return 'radio_button_unchecked';
+            else if (item_type === 'select') return index + '.';
         }
 
         function addOption($event, item) {
@@ -313,11 +252,6 @@
             return getTrustedUrl(finalURL);
         }
 
-        function indexOfDataSource(item, data_source) {
-            return item.map(function (e) {
-                return e.value;
-            }).indexOf(data_source);
-        }
 
         function setDataSource(item, data_source) {
             //For options in image,audio and iframe components
@@ -351,12 +285,48 @@
 
         }
 
-        function onSort() {
-            resetItemPosition();
+        function onSort(event) {
+            if (event.newIndex === event.oldIndex) return;
+            if (event.newIndex === 0) {
+                self.items[event.newIndex].predecessor = null;
+                self.items[1].predecessor = event.model.id;
+                if (self.items.length >= event.oldIndex + 2) {
+                    self.items[event.oldIndex + 1].predecessor = self.items[event.oldIndex].id;
+                }
+            }
+            else {
+                self.items[event.oldIndex].predecessor = event.model.predecessor;
+                self.items[event.newIndex].predecessor = self.items[event.newIndex - 1].id;
+                if (self.items.length >= event.newIndex + 2) {
+                    self.items[event.newIndex + 1].predecessor = event.model.id;
+                }
+            }
+
+            $scope.$apply();
         }
 
         function showDisplayOnly(isReview, isStatic) {
             return !(isReview && isStatic);
+        }
+
+        function sortItems(items) {
+            var results = [];
+            var firstItems = $filter('filter')(items, {predecessor: null});
+            angular.forEach(firstItems, function (item) {
+                results.push(item);
+                var next = $filter('filter')(items, {predecessor: item.id});
+                while (next && next.length) {
+                    var temp = next.pop();
+                    results.push(temp);
+                    var successors = $filter('filter')(items, {predecessor: temp.id});
+                    if (successors && successors.length) {
+                        angular.forEach(successors, function (obj) {
+                            next.push(obj);
+                        })
+                    }
+                }
+            });
+            return results;
         }
     }
 

@@ -58,7 +58,8 @@
                 Project.getPreview($stateParams.projectId).then(
                     function success(data) {
                         self.previewedProject = data[0];
-                        self.loading = false;
+                        self.previewedProject.task.template.items = sortItems(self.previewedProject.task.template.items);
+                            self.loading = false;
                         if (data[0]) {
                             $rootScope.pageTitle = data[0].name;
                         }
@@ -82,6 +83,26 @@
             else {
                 getProjects();
             }
+        }
+
+        function sortItems(items) {
+            var results = [];
+            var firstItems = $filter('filter')(items, {predecessor: null});
+            angular.forEach(firstItems, function (item) {
+                results.push(item);
+                var next = $filter('filter')(items, {predecessor: item.id});
+                while (next && next.length) {
+                    var temp = next.pop();
+                    results.push(temp);
+                    var successors = $filter('filter')(items, {predecessor: temp.id});
+                    if (successors && successors.length) {
+                        angular.forEach(successors, function (obj) {
+                            next.push(obj);
+                        })
+                    }
+                }
+            });
+            return results;
         }
 
         function getProjects() {
