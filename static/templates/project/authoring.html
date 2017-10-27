@@ -199,6 +199,10 @@
                                    ng-model="project.project.timeout" min="1">
                         </md-input-container>
                     </div>
+                    <div>
+                        <md-switch ng-disabled="project.isDisabled()"
+                                   ng-model="project.project.enable_boomerang">Enable Boomerang (Cascaded Release)
+                    </div>
                     <div class="layout-row layout-align-start-center" ng-if="project.project.batch_files.length">
                         <md-switch ng-disabled="project.isDisabled()"
                                    ng-model="project.project.allow_price_per_task">Custom Pricing
@@ -381,7 +385,9 @@
                                 </md-select>
                             </md-input-container>
 
-                            <div class="_secondary-text">Go to requester <a href="/requester-settings">settings</a> to manage your worker groups.</div>
+                            <div class="_secondary-text">Go to requester <a href="/requester-settings">settings</a> to
+                                manage your worker groups.
+                            </div>
                             <!--span ng-if="!project.isDisabled()" class="_link"
                                   ng-click="project.openWorkerGroupNew($event)">Add group</span-->
                         </div>

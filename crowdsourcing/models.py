@@ -406,7 +406,7 @@ class ProjectQueryset(models.query.QuerySet):
                                      ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
                                    FROM get_worker_ratings(%(worker_id)s)) worker_ratings
                     ON worker_ratings.requester_id = ratings.owner_id
-                       AND worker_ratings.worker_rating >= ratings.min_rating
+                       AND (worker_ratings.worker_rating >= ratings.min_rating or p.enable_boomerang is FALSE)
                 WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted_at IS NULL
                   AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
                   AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
@@ -515,6 +515,7 @@ class Project(TimeStampable, Archivable, Revisable):
     discussion_link = models.TextField(null=True, blank=True)
     topic_id = models.IntegerField(null=True, default=-1)
     post_id = models.IntegerField(null=True, default=-1)
+    enable_boomerang = models.BooleanField(default=True)
 
     objects = ProjectQueryset.as_manager()
 

@@ -70,7 +70,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle',
                   'allow_price_per_task', 'task_price_field', 'discussion_link', 'aux_attributes',
                   'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid',
-                  'checked_out', 'publish_at', 'published_at', 'template_id')
+                  'checked_out', 'publish_at', 'published_at', 'template_id', 'enable_boomerang')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only', 'discussion_link', 'aux_attributes',
@@ -182,6 +182,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         self.instance.allow_price_per_task = self.validated_data.get('allow_price_per_task',
                                                                      self.instance.allow_price_per_task)
         self.instance.task_price_field = self.validated_data.get('task_price_field', self.instance.task_price_field)
+        self.instance.enable_boomerang = self.validated_data.get('enable_boomerang', self.instance.enable_boomerang)
 
         self.instance.save()
         return self.instance

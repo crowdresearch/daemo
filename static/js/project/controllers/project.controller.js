@@ -502,6 +502,12 @@
                     request_data['task_price_field'] = newValue['task_price_field'];
                     key = 'task_price_field';
                 }
+
+                if (!angular.equals(newValue['enable_boomerang'], oldValue['enable_boomerang'])
+                    && (newValue['enable_boomerang'] === false || newValue['enable_boomerang'] === true)) {
+                    request_data['enable_boomerang'] = newValue['enable_boomerang'];
+                    key = 'enable_boomerang';
+                }
                 if (!angular.equals(newValue['allow_price_per_task'], oldValue['allow_price_per_task'])
                     && (newValue['allow_price_per_task'] === false || newValue['allow_price_per_task'] === true)) {
                     request_data['allow_price_per_task'] = newValue['allow_price_per_task'];
