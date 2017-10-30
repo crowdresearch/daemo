@@ -861,52 +861,60 @@ def update_feed_boomerang():
     # noinspection SqlResolve
     email_query = '''
         SELECT
-          p.id,
-          p.group_id,
+          available.id,
+          available.group_id,
           owner_profile.handle,
-          t_count.worker_id,
+          u_workers.id,
           sum(available) available_count,
-          u.email,
-          p.name,
-          coalesce((p.aux_attributes->>'median_price')::numeric, p.price)
-        FROM crowdsourcing_task t INNER JOIN (SELECT
-                                                group_id,
-                                                max(id) id
-                                              FROM crowdsourcing_task
-                                              WHERE deleted_at IS NULL
-                                              GROUP BY group_id) t_max ON t_max.id = t.id
-          INNER JOIN crowdsourcing_project p ON p.id = t.project_id
-          INNER JOIN (
-                       SELECT
-                         t.group_id,
-                         t.worker_id,
-                         1 available,
-                         sum(t.done) done
-                       FROM (
+          u_workers.email,
+          available.name,
+          coalesce((available.aux_attributes ->> 'median_price') :: NUMERIC, available.price)
+        FROM (
+               SELECT
+                 p.id,
+                 p.group_id,
+                 p.name,
+                 owner_id,
+                 p.min_rating,
+                 p.price,
+                 p.aux_attributes,
+                 sum(p.repetition - t_count.done) available
+               FROM crowdsourcing_task t
+                 INNER JOIN (SELECT
+                               group_id,
+                               max(id) id
+                             FROM crowdsourcing_task
+                             WHERE deleted_at IS NULL
+                             GROUP BY group_id) t_max ON t_max.id = t.id
+                 INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                 INNER JOIN (
                               SELECT
                                 t.group_id,
-                                u_all.id   worker_id,
-                                CASE WHEN (tw.worker_id IS NOT NULL)
-                                          AND tw.status NOT IN (4, 6, 7)
-                                  THEN 1
-                                ELSE 0 END done
-                              FROM crowdsourcing_task t
-                                INNER JOIN auth_user u_all ON TRUE
-                                INNER JOIN crowdsourcing_userprofile profile_all ON profile_all.user_id = u_all.id
-                                LEFT OUTER JOIN crowdsourcing_taskworker tw ON (t.id = tw.task_id
-                                AND tw.worker_id = u_all.id)
-                              WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL AND profile_all.is_worker = TRUE) t
-                       GROUP BY t.group_id, t.worker_id)
-                     t_count ON t_count.group_id = t.group_id
-          INNER JOIN get_min_project_ratings() ratings ON ratings.project_id = p.id
-          INNER JOIN get_worker_ratings(worker_id) worker_ratings
-            ON worker_ratings.requester_id = p.owner_id
-             AND (coalesce(worker_ratings.worker_rating, 1.99) >= ratings.min_rating or p.enable_boomerang is FALSE)
+                                sum(t.done) done
+                              FROM (
+                                     SELECT
+                                       t.group_id,
+                                       CASE WHEN (tw.worker_id IS NOT NULL)
+                                                 AND tw.status NOT IN (4, 6, 7)
+                                         THEN 1
+                                       ELSE 0 END done
+                                     FROM crowdsourcing_task t
+                                       LEFT OUTER JOIN crowdsourcing_taskworker tw ON t.id = tw.task_id
+                                     WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
+                              GROUP BY t.group_id)
+                            t_count ON t_count.group_id = t.group_id AND t_count.done < p.repetition
+               WHERE p.status = 3 AND p.deleted_at IS NULL
+               GROUP BY p.id, p.name, owner_id, p.min_rating, p.group_id, p.price, aux_attributes) available
+          INNER JOIN auth_user u_workers ON TRUE
+          INNER JOIN crowdsourcing_userprofile p_workers ON p_workers.user_id = u_workers.id 
+          AND p_workers.is_worker IS TRUE
+          INNER JOIN get_worker_ratings(u_workers.id) worker_ratings
+            ON worker_ratings.requester_id = available.owner_id
+               AND (coalesce(worker_ratings.worker_rating, 1.99) >= available.min_rating)
           LEFT OUTER JOIN crowdsourcing_WorkerProjectNotification n
-            ON n.project_id = p.group_id AND n.worker_id = t_count.worker_id
-          INNER JOIN auth_user u ON u.id = t_count.worker_id
-          INNER JOIN crowdsourcing_userpreferences pref ON pref.user_id = u.id
-          INNER JOIN auth_user owner ON owner.id = p.owner_id
+            ON n.project_id = available.group_id AND n.worker_id = u_workers.id
+          INNER JOIN crowdsourcing_userpreferences pref ON pref.user_id = u_workers.id
+          INNER JOIN auth_user owner ON owner.id = available.owner_id
           INNER JOIN crowdsourcing_userprofile owner_profile ON owner_profile.user_id = owner.id
           LEFT OUTER JOIN (
                             SELECT
@@ -917,13 +925,11 @@ def update_feed_boomerang():
                               INNER JOIN crowdsourcing_task t ON p.id = t.project_id
                               LEFT OUTER JOIN crowdsourcing_taskworker tw ON tw.task_id = t.id
                             GROUP BY p.id, tw.worker_id
-                          ) worker_project ON worker_project.id = p.id AND worker_project.worker_id = t_count.worker_id
-        WHERE t_count.done < p.repetition
-              AND p.status = 3 AND n.id IS NULL AND pref.new_tasks_notifications = TRUE
-              AND coalesce(worker_project.tasks_done, 0) = 0 --and worker_ratings.worker_rating is not null
-        GROUP BY p.id, p.group_id, owner_profile.handle, t_count.worker_id, u.email, p.name, p.price, p.aux_attributes
-        HAVING t_count.worker_id IS NOT NULL
-        ORDER BY 1 DESC;
+                          ) worker_project ON worker_project.id = available.id
+                           AND worker_project.worker_id = u_workers.id
+        WHERE n.id IS NULL AND pref.new_tasks_notifications = TRUE AND coalesce(worker_project.tasks_done, 0) = 0
+        GROUP BY available.id, available.group_id, owner_profile.handle, u_workers.id, u_workers.email, available.name,
+          available.price, available.aux_attributes;
     '''
     params = {
         'in_progress': models.Project.STATUS_IN_PROGRESS,
