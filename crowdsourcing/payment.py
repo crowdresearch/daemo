@@ -138,7 +138,7 @@ class Stripe(object):
                         }
                     }
                     customer_obj = StripeCustomer.objects.create(owner_id=user.id, stripe_id=customer.stripe_id,
-                                                                 stripe_data=stripe_data)
+                                                                 stripe_data=stripe_data, account_balance=500)
                 else:
                     customer_obj = user.stripe_customer
             except stripe.CardError as e:
