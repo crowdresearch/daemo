@@ -30,7 +30,7 @@
                                   'other': '{} tasks have been returned for revision'}">
                         </ng-pluralize>
                     </div>
-
+                    <div class="_card-list-label">Last submitted {{ myTasks.getDate(item.last_submitted_at) }}</div>
                     <div ng-if="item.returned>0 || item.in_progress>0"
                          class="_card-list-text _title _primary _clickable"
                          ng-click="myTasks.openTask(item.id)">{{ item.name }}
@@ -97,7 +97,7 @@
                                   'other': '{} tasks have been returned for revision'}">
                         </ng-pluralize>
                     </div>
-
+                    <div class="_card-list-label">Last submitted {{ myTasks.getDate(item.last_submitted_at) }}</div>
                     <div ng-if="item.returned==0 && item.in_progress==0" class="_card-list-text _title"
                          style="color: rgba(0, 0, 0, 0.7);">{{ item.name }}
                     </div>

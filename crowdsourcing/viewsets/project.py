@@ -295,7 +295,8 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
               then  max(submitted_at) + INTERVAL '2 day'
               else
                  max(submitted_at) + INTERVAL '4 day'
-               end payout_available_by
+               end payout_available_by,
+               max(submitted_at) last_submitted_at
             FROM (SELECT
                     p.group_id                                                                      id,
                     p.name,
@@ -354,7 +355,7 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
                                        fields=('id', 'name', 'owner', 'price', 'status', 'returned',
                                                'in_progress', 'awaiting_review', 'completed', 'expires_at',
                                                'payout_available_by', 'paid_count',
-                                               'expected_payout_amount', 'amount_paid'),
+                                               'expected_payout_amount', 'amount_paid', 'last_submitted_at'),
                                        context={'request': request})
         if group_by == 'status':
             response_data = {

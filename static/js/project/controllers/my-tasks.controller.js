@@ -25,6 +25,7 @@
         self.dropSavedTasks = dropSavedTasks;
         self.getAmount = getAmount;
         self.openTask = openTask;
+        self.getDate = getDate;
         self.tasks = [];
         self.status = {
             RETURNED: 5,
@@ -48,7 +49,9 @@
             ).finally(function () {
             });
         }
-
+        function getDate(timestamp) {
+            return new Date(timestamp).toLocaleString();
+        }
         function getAmount(amount) {
             return amount.toFixed(2);
         }
