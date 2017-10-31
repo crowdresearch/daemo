@@ -35,7 +35,18 @@
                         <div>
                             <div class="_time">
                                 <div ng-if="project.allow_price_per_task && project.aux_attributes.median_price">
-                                    {{ project.aux_attributes.min_price | currency: "$":2}}-{{ project.aux_attributes.max_price | currency: "$":2}}
+                                    <span ng-if="project.aux_attributes.min_price < 10">
+                                        {{ project.aux_attributes.min_price | currency: "$":2}}-
+                                    </span>
+                                    <span ng-if="project.aux_attributes.min_price >= 10">
+                                        ${{ project.aux_attributes.min_price | number:0}}-
+                                    </span>
+                                    <span ng-if="project.aux_attributes.max_price < 10">
+                                        {{ project.aux_attributes.max_price | currency: "$":2}}
+                                    </span>
+                                    <span ng-if="project.aux_attributes.max_price >= 10">${{ project.aux_attributes.max_price | number:0}}
+                                    </span>
+
                                 </div>
                             </div>
 
