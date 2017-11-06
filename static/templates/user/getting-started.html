@@ -9,9 +9,18 @@
             </div>
         </div>
     </md-toolbar>
-    <md-progress-linear style="position: fixed; max-width: 768px" ng-if="user.accountRequested" md-mode="indeterminate"></md-progress-linear>
-    <div style="background-color: white" class="md-padding" ng-cloak="">
-        <div class="_getting-started">
+    <md-progress-linear style="position: fixed; max-width: 768px" ng-if="user.accountRequested"
+                        md-mode="indeterminate"></md-progress-linear>
+    <div style="background-color: white" ng-cloak="">
+        <div style="background-color: #f5f5f5" ng-if="isSandboxEnvironment">
+            <div class="md-padding">The information you provide does not have to be correct because this is the sandbox
+                environment. Please use the Stripe testing data for <a
+                        href="https://stripe.com/docs/testing#cards" target="_blank">credit cards</a> and <a
+                        href="https://stripe.com/docs/ach#testing-ach" target="_blank">bank accounts</a>.
+            </div>
+        </div>
+        <div class="_getting-started md-padding">
+
             <div ng-if="user.gettingStartedStep == 'one'">
                 <div>
                     <div>First, we'll create your profile. The following information may be visible to other workers or
@@ -285,7 +294,8 @@
                     any banking or credit card information.
                 </div>
                 <div layout="row" layout-align="end center">
-                    <md-button ng-disabled="user.accountRequested" style="margin-right: 0" ng-click="user.savePaymentInfo()" class="md-accent">Submit
+                    <md-button ng-disabled="user.accountRequested" style="margin-right: 0"
+                               ng-click="user.savePaymentInfo()" class="md-accent">Submit
                     </md-button>
                 </div>
             </div>

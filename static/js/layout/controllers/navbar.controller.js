@@ -9,12 +9,13 @@
         .module('crowdsource.layout.controllers')
         .controller('NavbarController', NavbarController);
 
-    NavbarController.$inject = ['$scope', '$rootScope', 'Authentication', 'User', '$mdSidenav', '$timeout', '$mdMedia'];
+    NavbarController.$inject = ['$scope', '$rootScope', 'Authentication', 'User', '$mdSidenav',
+        '$timeout', '$mdMedia', '$location'];
 
     /**
      * @namespace NavbarController
      */
-    function NavbarController($scope, $rootScope, Authentication, User, $mdSidenav, $timeout, $mdMedia) {
+    function NavbarController($scope, $rootScope, Authentication, User, $mdSidenav, $timeout, $mdMedia, $location) {
         var self = this;
         $scope.toggleRight = buildDelayedToggler('right');
         $scope.rightCtrl = rightCtrl;
@@ -27,12 +28,11 @@
         self.profile = {};
         $rootScope.screenIsSmall = $mdMedia('sm');
         $rootScope.$mdMedia = $mdMedia;
-
+        $rootScope.isSandboxEnvironment = $location.host().indexOf('sandbox') > -1;
         initializeWebSocket();
         getNotifications();
         getProfile();
         getPreferences();
-
         function initializeWebSocket() {
             $scope.$on('message', function (event, data) {
                 // updateMessageStatus(true);

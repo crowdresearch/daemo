@@ -9,13 +9,14 @@
         .module('crowdsource.user.controllers')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$state', '$scope', '$window', '$mdToast', '$mdDialog', '$q', 'Authentication', 'User', 'Payment'];
+    UserController.$inject = ['$state', '$scope', '$window', '$mdToast', '$mdDialog', '$q', 'Authentication',
+        'User', 'Payment', '$rootScope'];
 
     /**
      * @namespace UserController
      */
 
-    function UserController($state, $scope, $window, $mdToast, $mdDialog, $q, Authentication, User, Payment) {
+    function UserController($state, $scope, $window, $mdToast, $mdDialog, $q, Authentication, User, Payment, $rootScope) {
         var vm = this;
         vm.isHandleUnique = null;
         vm.validateScreenName = validateScreenName;
@@ -48,16 +49,16 @@
             is_worker: null,
             is_requester: null,
             bank: {
-                account_number: null,
-                routing_number: null
+                account_number: $rootScope.isSandboxEnvironment ? '000123456789' : null,
+                routing_number: $rootScope.isSandboxEnvironment ? '110000000' : null
             },
             credit_card: {
-                number: null,
+                number: $rootScope.isSandboxEnvironment ? '4242424242424242' : null,
                 first_name: null,
                 last_name: null,
-                cvv: null,
-                exp_month: null,
-                exp_year: null
+                cvv: $rootScope.isSandboxEnvironment ? 123 : null,
+                exp_month: $rootScope.isSandboxEnvironment ? 9 : null,
+                exp_year: $rootScope.isSandboxEnvironment ? 2020 : null
             }
         };
         vm.gettingStartedStep = 'one';
@@ -140,7 +141,7 @@
                 function (predictions) {
                     var results = [];
 
-                    if(predictions) {
+                    if (predictions) {
                         for (var i = 0, prediction; prediction = predictions[i]; i++) {
                             results.push(prediction);
                         }
