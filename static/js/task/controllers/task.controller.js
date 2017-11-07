@@ -73,6 +73,7 @@
 
                     self.requester_alias = data[0].requester_alias;
                     self.taskData = data[0].data;
+                    self.taskData.template.items = sortItems(data[0].data.template.items);
                     self.is_review = data[0].is_review;
                     self.is_qualified = data[0].is_qualified;
                     self.rejected = data[0].is_rejected;
@@ -370,6 +371,26 @@
                 return Math.round((p * 60)).toString() === '1' ? '1 minute' : Math.round((p * 60)).toString() + ' minutes';
             }
             return Math.round((p * 60) * 60).toString() + ' seconds';
+        }
+
+        function sortItems(items) {
+            var results = [];
+            var firstItems = $filter('filter')(items, {predecessor: null});
+            angular.forEach(firstItems, function (item) {
+                results.push(item);
+                var next = $filter('filter')(items, {predecessor: item.id});
+                while (next && next.length) {
+                    var temp = next.pop();
+                    results.push(temp);
+                    var successors = $filter('filter')(items, {predecessor: temp.id});
+                    if (successors && successors.length) {
+                        angular.forEach(successors, function (obj) {
+                            next.push(obj);
+                        })
+                    }
+                }
+            });
+            return results;
         }
 
 
