@@ -545,7 +545,7 @@ class ProjectCategory(TimeStampable):
         unique_together = ('category', 'project')
 
 
-class TemplateItem(TimeStampable):
+class TemplateItem(TimeStampable, Revisable):
     ROLE_DISPLAY = 'display'
     ROLE_INPUT = 'input'
 

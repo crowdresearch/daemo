@@ -17,12 +17,21 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
     def create(self, *args, **kwargs):
         item = models.TemplateItem.objects.create(**self.validated_data)
         item.group_id = item.id
+        item.save()
         return item
 
     @staticmethod
     def create_revision(instance, template):
         instance.template = template
         return create_copy(instance=instance)
+
+    @staticmethod
+    def rebuild_tree(template):
+        items = models.TemplateItem.objects.prefetch_related('predecessor').filter(template_id=template.id)
+        for item in items:
+            if item.predecessor is not None:
+                item.predecessor = items.filter(group_id=item.predecessor.group_id).first()
+                item.save()
 
 
 class TemplateSerializer(DynamicFieldsModelSerializer):
@@ -135,7 +144,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
 
         for item in items:
             TemplateItemSerializer.create_revision(item, template)
-
+        TemplateItemSerializer.rebuild_tree(template)
         return template
 
 
