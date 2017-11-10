@@ -13,7 +13,7 @@ from crowdsourcing.crypto import to_hash
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
-from crowdsourcing.serializers.template import TemplateSerializer
+from crowdsourcing.serializers.template import TemplateSerializer, TemplateItemSerializer
 from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.tasks import update_project_boomerang
 from crowdsourcing.utils import generate_random_id
@@ -288,7 +288,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
             template_item.pk = None
             template_item.template = template
             template_item.save()
-
+        TemplateItemSerializer.rebuild_tree(template)
         project.id = None
         project.save()
         project.group_id = project.id
