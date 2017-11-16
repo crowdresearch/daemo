@@ -78,7 +78,8 @@
                 </md-button>
             </div>
         </div>
-        <div style="padding-top: 24px" class="_authoring_content" ng-if="!project.showInstructions && !project.isDisabled()">
+        <div style="padding-top: 24px" class="_authoring_content"
+             ng-if="!project.showInstructions && !project.isDisabled()">
             <div>Upload a CSV if you want to create a task for each row. You can use the CSV headers as <span
                     class="_variable">{{ '\{\{variables\}\}' }}</span> in the task design.
             </div>
@@ -138,9 +139,14 @@
 
                 </div>
 
-                <div class="_secondary-text _authoring_content">
+                <div class="_secondary-text _authoring_content" ng-if="project.project.price">
                     To achieve California Minimum Wage, workers need to be able to finish this task in
                     {{ project.getMinWage() }}.
+                </div>
+                <div class="_secondary-text _authoring_content" ng-if="!project.project.price">
+                    We recommend pricing tasks to achieve <a href="https://www.minimum-wage.org/california"
+                                                             target="_blank">California Minimum Wage</a> of $10.50 per
+                    hour.
                 </div>
                 <br/>
                 <div class="_authoring_content">
