@@ -78,7 +78,7 @@
                 </md-button>
             </div>
         </div>
-        <div style="padding-top: 24px" class="_authoring_content" ng-if="!project.showInstructions">
+        <div style="padding-top: 24px" class="_authoring_content" ng-if="!project.showInstructions && !project.isDisabled()">
             <div>Upload a CSV if you want to create a task for each row. You can use the CSV headers as <span
                     class="_variable">{{ '\{\{variables\}\}' }}</span> in the task design.
             </div>
@@ -95,7 +95,7 @@
             </div>
         </div>
 
-        <md-list style="padding-left: 16px" ng-if="!project.isDisabled() && project.project.batch_files.length>0"
+        <md-list style="padding-left: 16px" ng-if="project.project.batch_files.length>0"
                  class="_meta-sources"
                  ng-cloak="">
             <md-list-item class="md-line-2 layout-row layout-align-start-center"
@@ -105,7 +105,8 @@
                         ({{ file.size }}, {{ file.number_of_rows }} rows)
                     </div>
                 </div>
-                <md-icon style="padding-top: 4px" ng-click="project.removeFile(file.id)" class="_file-action"
+                <md-icon ng-if="!project.isDisabled()" style="padding-top: 4px" ng-click="project.removeFile(file.id)"
+                         class="_file-action"
                          md-font-set="material-icons">clear
                 </md-icon>
             </md-list-item>
@@ -385,10 +386,12 @@
                                 </md-select>
                             </md-input-container>
 
-                            <div class="_secondary-text" ng-if="project.workerGroups.length">Go to requester <a href="/requester-settings">settings</a> to
+                            <div class="_secondary-text" ng-if="project.workerGroups.length">Go to requester <a
+                                    href="/requester-settings">settings</a> to
                                 manage your worker groups.
                             </div>
-                             <div class="_secondary-text" ng-if="!project.workerGroups.length">If you would like to restrict this task to specific worker groups,
+                            <div class="_secondary-text" ng-if="!project.workerGroups.length">If you would like to
+                                restrict this task to specific worker groups,
                                 go to <a href="/requester-settings"> requester settings</a> to create a group.
                             </div>
                             <!--span ng-if="!project.isDisabled()" class="_link"
