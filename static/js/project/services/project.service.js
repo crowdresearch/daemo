@@ -46,7 +46,8 @@
             getTimeEstimates: getTimeEstimates,
             getWorkerDemographics: getWorkerDemographics,
             getRemainingCount: getRemainingCount,
-            hasPermission: hasPermission
+            hasPermission: hasPermission,
+            logPreview: logPreview
         };
 
 
@@ -180,6 +181,15 @@
                 url: baseUrl + pk + '/attach_file/',
                 method: 'POST',
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function logPreview(pk) {
+            var settings = {
+                url: baseUrl + pk + '/log-preview/',
+                method: 'POST',
+                data: {}
             };
             return HttpService.doRequest(settings);
         }

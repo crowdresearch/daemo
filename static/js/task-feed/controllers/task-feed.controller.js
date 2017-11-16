@@ -59,7 +59,7 @@
                     function success(data) {
                         self.previewedProject = data[0];
                         self.previewedProject.task.template.items = sortItems(self.previewedProject.task.template.items);
-                            self.loading = false;
+                        self.loading = false;
                         if (data[0]) {
                             $rootScope.pageTitle = data[0].name;
                         }
@@ -68,6 +68,12 @@
                         $mdToast.showSimple('Error fetching preview.');
                     }
                 ).finally(function () {
+                    Project.logPreview($stateParams.projectId).then(
+                        function success(data) {
+
+                        }
+                    ).finally(function () {
+                    });
                 });
 
                 Project.getRemainingCount($stateParams.projectId).then(

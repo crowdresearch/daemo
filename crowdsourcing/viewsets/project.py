@@ -108,6 +108,12 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
 
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
 
+    @detail_route(methods=['POST'], url_path='log-preview')
+    def log_preview(self, request, *args, **kwargs):
+        project = self.get_object()
+        models.ProjectPreview.objects.create(project=project, user=request.user)
+        return Response({})
+
     @detail_route(methods=['PUT'])
     def update_status(self, request, pk, *args, **kwargs):
         with transaction.atomic():

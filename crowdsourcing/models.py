@@ -975,3 +975,8 @@ class WorkerBonus(TimeStampable):
     models.ForeignKey(Project, related_name='worker_bonuses', null=True)
     charge = models.ForeignKey('StripeCharge', null=True)
     amount = models.IntegerField()
+
+
+class ProjectPreview(TimeStampable):
+    project = models.ForeignKey('Project')
+    user = models.ForeignKey(User)
