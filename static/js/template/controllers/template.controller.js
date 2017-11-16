@@ -181,6 +181,9 @@
                     }
                     else {
                         self.items.splice(index + 1, 0, field);
+                        if (index + 2 < self.items.length) {
+                            self.items[index+2].predecessor = response[0].id;
+                        }
                         resetItemPosition();
                     }
                     $scope.project.selectedItem = field;
