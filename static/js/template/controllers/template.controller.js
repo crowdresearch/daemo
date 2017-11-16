@@ -89,6 +89,7 @@
             field.aux_attributes = item.aux_attributes;
             field.required = item.required;
             field.predecessor = item.id;
+            field.sub_type = item.sub_type;
             var index = self.items.indexOf(item);
             addComponent(field, true, index);
             return false;
