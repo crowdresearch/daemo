@@ -878,7 +878,7 @@ def update_feed_boomerang():
                  p.min_rating,
                  p.price,
                  p.aux_attributes,
-                 sum(p.repetition - t_count.done) available
+                 sum(1) available
                FROM crowdsourcing_task t
                  INNER JOIN (SELECT
                                group_id,
