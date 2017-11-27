@@ -35,6 +35,7 @@
         self.selectedItem = null;
         self.amountToPay = 0;
         self.publishing = false;
+        self.isLatestRevision = isLatestRevision;
         $scope.ctrlDown = false;
         $scope.ctrlKey = 17;
         $scope.cmdKey = 224;
@@ -1121,7 +1122,7 @@
         }
 
         function showResume() {
-            return self.project.status == self.status.STATUS_PAUSED || self.project.status == self.status.STATUS_DRAFT;
+            return (self.project.status === self.status.STATUS_PAUSED || self.project.status === self.status.STATUS_DRAFT) && isLatestRevision();
         }
 
         function totalCost() {
@@ -1169,5 +1170,18 @@
             $scope.$apply();
         });
         */
+
+        function isLatestRevision() {
+            var isLatest = true;
+            if(!self.project || !self.project.revisions){
+                return false;
+            }
+            for (var i = 0; i < self.project.revisions.length; i++) {
+                if (self.project.revisions[i] > self.project.id) {
+                    isLatest = false;
+                }
+            }
+            return isLatest;
+        }
     }
 })();

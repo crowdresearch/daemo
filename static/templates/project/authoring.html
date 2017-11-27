@@ -35,7 +35,7 @@
     </div>
 
     <div class="_authoring_content _error-inset"
-         ng-if="project.project.status==project.status.STATUS_IN_PROGRESS || project.project.status==project.status.STATUS_PAUSED">
+         ng-if="project.isLatestRevision() && (project.project.status === project.status.STATUS_IN_PROGRESS || project.project.status === project.status.STATUS_PAUSED)">
         This project has launched.
         <div class="_error">
             <md-button ng-disabled="project.createRevisionInProgress" ng-click="project.createRevision();"
