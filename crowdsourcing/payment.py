@@ -1,9 +1,9 @@
 from __future__ import division
 
 import hashlib
+import math
 import time
 
-import math
 import stripe
 from django.conf import settings
 from django.utils import timezone
@@ -312,14 +312,13 @@ class Stripe(object):
         amount = int(amount * 100)
         source_charge = user.stripe_customer.charges.filter(expired=False,
                                                             balance__gte=amount).order_by('id').first()
-        if source_charge is None:
-            return None
         self.transfer(worker, amount, description=reason)
         user.stripe_customer.account_balance -= amount
         user.stripe_customer.save()
 
-        source_charge.balance -= amount
-        source_charge.save()
+        if source_charge is not None:
+            source_charge.balance -= amount
+            source_charge.save()
         bonus = WorkerBonus.objects.create(worker=worker, requester=user, reason=reason, amount=amount,
                                            charge=source_charge)
         return bonus

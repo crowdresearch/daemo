@@ -78,6 +78,7 @@ class ProjectValidator(object):
 
 
 def validate_account_balance(request, amount_due):
-    if amount_due > request.user.stripe_customer.account_balance:
+    customer = models.StripeCustomer.objects.select_for_update().filter(owner=request.user).first()
+    if customer is None or amount_due > customer.account_balance:
         raise InsufficientFunds
     return True

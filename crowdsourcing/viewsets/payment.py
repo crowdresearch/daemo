@@ -69,9 +69,10 @@ class TransferViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets
         ).count() < 1 or not hasattr(worker.user, 'stripe_account'):
             raise serializers.ValidationError(detail=daemo_error("You cannot bonus a worker "
                                                                  "who hasn't done work for you."))
-        validate_account_balance(request, int(amount * 100))
-        stripe = Stripe()
-        bonus = stripe.pay_bonus(worker=worker.user, user=request.user, amount=amount, reason=reason)
+        with transaction.atomic():
+            validate_account_balance(request, int(amount * 100))
+            stripe = Stripe()
+            bonus = stripe.pay_bonus(worker=worker.user, user=request.user, amount=amount, reason=reason)
         if bonus is None:
             return Response({"message": "Bonus not created!"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"message": "Bonus created successfully."})
