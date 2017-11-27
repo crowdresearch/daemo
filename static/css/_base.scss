@@ -1207,6 +1207,7 @@ md-input-container {
         display: none;
     }
 }
+
 ._hide-sm {
     @media only screen and (max-width: 959px) {
         display: none;
@@ -1764,14 +1765,25 @@ code {
     }
 }
 
-
 md-input-container .md-input {
     padding-left: 0 !important;
 }
-
 
 @supports (-webkit-appearance:none) {
     ._ml-4-chrome {
         margin-left: -4px;
     }
+}
+
+md-radio-group.layout-gt-lg-row md-radio-button,
+md-radio-group.layout-gt-md-row md-radio-button,
+md-radio-group.layout-gt-sm-row md-radio-button,
+md-radio-group.layout-gt-xs-row md-radio-button,
+md-radio-group.layout-lg-row md-radio-button,
+md-radio-group.layout-md-row md-radio-button,
+md-radio-group.layout-row md-radio-button,
+md-radio-group.layout-sm-row md-radio-button,
+md-radio-group.layout-xl-row md-radio-button,
+md-radio-group.layout-xs-row md-radio-button {
+    margin: 8px 16px 0 0 !important;
 }
