@@ -108,7 +108,7 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
 
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
 
-    @detail_route(methods=['POST'], url_path='log-preview')
+    @detail_route(methods=['POST'], url_path='log-preview', permission_classes=[IsAuthenticated])
     def log_preview(self, request, *args, **kwargs):
         project = self.get_object()
         models.ProjectPreview.objects.create(project=project, user=request.user)
