@@ -511,13 +511,8 @@
                         access_token: response[0].access_token,
                         refresh_token: response[0].refresh_token
                     };
-                    var a = document.createElement('a');
-                    a.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(credentials));
-                    a.target = '_blank';
-                    a.download = 'credentials.json';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                    var blob = new Blob([JSON.stringify(credentials)], {type: "application/json"});
+                    window.location = window.URL.createObjectURL(blob);
                 },
                 function error(response) {
                     $mdToast.showSimple('Could not get access token.');
