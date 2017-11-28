@@ -33,6 +33,53 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
     lookup_field = 'username'
     permission_classes = [CanCreateAccount]
 
+    @list_route(methods=['get'], permission_classes=[IsAuthenticated])
+    def activity(self, request, *args, **kwargs):
+        response_data = {
+            "worker": False,
+            "requester": False
+        }
+        worker_query = '''
+            SELECT
+              worker_id id,
+              count(day_of_month) days_of_month
+            FROM (
+                   SELECT
+                     worker_id,
+                     extract(DAY FROM submitted_at) day_of_month
+                   FROM crowdsourcing_taskworker
+                   WHERE submitted_at > now() - INTERVAL '30 day' AND status IN (2, 3) and worker_id=%(user_id)s
+                   GROUP BY worker_id, extract(DAY FROM submitted_at)
+                 ) s
+            GROUP BY worker_id HAVING count(day_of_month) >= 5;
+        '''
+        params = {
+            "user_id": request.user.id
+        }
+        worker = User.objects.raw(worker_query, params)
+        if len(list(worker)):
+            response_data['worker'] = True
+        requester_query = '''
+            SELECT count(DISTINCT day_of_month) id
+            FROM (
+                   SELECT extract(DAY FROM publish_at) day_of_month
+                   FROM crowdsourcing_project
+                   WHERE owner_id = %(user_id)s AND publish_at > now() - INTERVAL '30 day'
+                   UNION ALL
+                   SELECT extract(DAY FROM approved_at) day_of_month
+                   FROM crowdsourcing_taskworker tw
+                     INNER JOIN crowdsourcing_task t ON tw.task_id = t.id
+                     INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                   WHERE tw.status = 3 AND p.owner_id = %(user_id)s AND tw.approved_at > now() - INTERVAL '30 day') s
+            HAVING count(DISTINCT day_of_month) >= 5
+        '''
+        requester = User.objects.raw(requester_query, params)
+        if len(list(requester)):
+            response_data['requester'] = True
+        return Response(response_data)
+
+
+
     def create(self, request, *args, **kwargs):
         serializer = UserSerializer(validate_non_fields=True, data=request.data, context={'request': request})
         if serializer.is_valid():
