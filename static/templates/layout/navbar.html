@@ -16,7 +16,10 @@
                 </a>
                 <div ui-sref="root"
                      class="_nav-platform-name">
-                    DAEMO <div ng-if="isSandboxEnvironment" style="line-height: 14px; font-size: small; text-align: right; font-weight: 500">Sandbox</div>
+                    DAEMO
+                    <div ng-if="isSandboxEnvironment"
+                         style="line-height: 14px; font-size: small; text-align: right; font-weight: 500">Sandbox
+                    </div>
                 </div>
 
             </div>
@@ -50,6 +53,10 @@
                         <li class="_nav-list-item">
                             <a href="/forum" target="_blank">Forum</a>
                         </li>
+                        <li class="_nav-list-item" ng-if="vm.profile.is_requester">
+                            <a ui-sref="docs.getting_started" ui-sref-active="_active">API Docs</a>
+                        </li>
+
                         <li class="_nav-list-item">
                             <a ui-sref="profile" ui-sref-active="_active"><span>{{ vm.profile.user.first_name }}</span></a>
                         </li>
@@ -62,6 +69,12 @@
                                     <md-menu-item>
                                         <md-button class="md-no-ink md-primary" ui-sref="change_password">
                                             Change Password
+                                        </md-button>
+                                    </md-menu-item>
+                                    <md-menu-item>
+                                        <md-button class="md-no-ink md-primary" href="https://sandbox.daemo.org"
+                                                   target="_blank">
+                                            Go to Sandbox
                                         </md-button>
                                     </md-menu-item>
                                     <md-menu-item>
