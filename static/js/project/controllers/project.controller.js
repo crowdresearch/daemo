@@ -34,6 +34,7 @@
         self.fileUploading = false;
         self.selectedItem = null;
         self.amountToPay = 0;
+        self.availableWorkerCount = 1;
         self.publishing = false;
         self.isLatestRevision = isLatestRevision;
         $scope.ctrlDown = false;
@@ -243,8 +244,20 @@
                 getAWS();
                 getProfileCompletion();
                 loadFinancialInfo();
+                getAvailableWorkerCount();
             });
 
+        }
+
+        function getAvailableWorkerCount() {
+            User.getAvailableWorkerCount().then(
+                function success(response) {
+                    self.availableWorkerCount = response[0].count;
+                },
+                function error(response) {
+
+                }
+            );
         }
 
         function loadFinancialInfo() {
@@ -1173,7 +1186,7 @@
 
         function isLatestRevision() {
             var isLatest = true;
-            if(!self.project || !self.project.revisions){
+            if (!self.project || !self.project.revisions) {
                 return false;
             }
             for (var i = 0; i < self.project.revisions.length; i++) {

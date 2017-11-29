@@ -336,6 +336,8 @@ CELERY_IGNORE_RESULT = True
 CELERY_STORE_ERRORS_EVEN_IF_IGNORED = True
 MIN_WORKERS_FOR_STATS = 10
 
+WORKER_ACTIVITY_DAYS = 30
+
 # LOGGING CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging

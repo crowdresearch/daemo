@@ -1,9 +1,12 @@
 from datetime import datetime
+from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import mixins
 from rest_framework import status, viewsets, serializers
 from rest_framework.decorators import detail_route, list_route
@@ -32,6 +35,13 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
     lookup_value_regex = '[^/]+'
     lookup_field = 'username'
     permission_classes = [CanCreateAccount]
+
+    @list_route(methods=['get'], permission_classes=[IsAuthenticated], url_path='available-workers')
+    def available_workers(self, request, *args, **kwargs):
+        workers = models.TaskWorker.objects.values('worker').filter(
+            submitted_at__gt=timezone.now() - timedelta(days=settings.WORKER_ACTIVITY_DAYS)).annotate(
+            Count('worker', distinct=True))
+        return Response({"count": workers[0]['worker__count'] if len(workers) else 1})
 
     @list_route(methods=['get'], permission_classes=[IsAuthenticated])
     def activity(self, request, *args, **kwargs):
@@ -77,8 +87,6 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
         if len(list(requester)):
             response_data['requester'] = True
         return Response(response_data)
-
-
 
     def create(self, request, *args, **kwargs):
         serializer = UserSerializer(validate_non_fields=True, data=request.data, context={'request': request})

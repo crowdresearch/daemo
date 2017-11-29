@@ -45,7 +45,8 @@
             updateBankInfo: updateBankInfo,
             getNotifications: getNotifications,
             isHandleUnique: isHandleUnique,
-            updateHandle: updateHandle
+            updateHandle: updateHandle,
+            getAvailableWorkerCount: getAvailableWorkerCount
         };
 
 
@@ -313,6 +314,14 @@
                 url: '/api/profile/stripe/',
                 method: 'POST',
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function getAvailableWorkerCount() {
+            var settings = {
+                url: '/api/user/available-workers/',
+                method: 'GET'
             };
             return HttpService.doRequest(settings);
         }

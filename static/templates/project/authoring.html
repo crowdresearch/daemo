@@ -120,7 +120,7 @@
                     <md-input-container flex-gt-xs="20">
                         <label>Assignments per task</label>
                         <input ng-disabled="project.isDisabled()" name="repetition" type="number" min="1"
-                               ng-model="project.project.repetition">
+                               ng-model="project.project.repetition" max="{{ project.availableWorkerCount }}">
                     </md-input-container>
                     <md-input-container flex-gt-xs="20" class="md-block md-input-has-placeholder">
                         <label>Price per assignment</label>
@@ -138,7 +138,9 @@
                     </div>
 
                 </div>
-
+                <div class="_error _authoring_content" ng-if="project.project.repetition>project.availableWorkerCount">
+                    Number of available workers is {{ project.availableWorkerCount }}.
+                </div>
                 <div class="_secondary-text _authoring_content" ng-if="project.project.price">
                     To achieve California Minimum Wage, workers need to be able to finish this task in
                     {{ project.getMinWage() }}.
