@@ -26,10 +26,12 @@
                     </div>
                     <div layout-xs="column" layout-gt-sm="row" class="layout-align-start-center"
                          style="padding-left: 16px">
-                        <div ng-if="task.timeEstimates.self_time_estimate">This task takes: <span ng-if="task.timeEstimates.self_time_estimate > 59"
-                                class="_bold">{{ task.timeEstimates.self_time_estimate | amDurationFormat : 'seconds'}} for you
+                        <div ng-if="task.timeEstimates.self_time_estimate">This task takes: <span
+                                ng-if="task.timeEstimates.self_time_estimate > 59"
+                                class="_bold">{{ task.timeEstimates.self_time_estimate | amDurationFormat : 'seconds' }} for you
                          </span>
-                            <span class="_bold" ng-if="task.timeEstimates.self_time_estimate < 60">{{ task.timeEstimates.self_time_estimate }} seconds for you</span>
+                            <span class="_bold"
+                                  ng-if="task.timeEstimates.self_time_estimate < 60">{{ task.timeEstimates.self_time_estimate }} seconds for you</span>
                         </div>
                         <div ng-if="task.timeEstimates.others_time_estimate" style="padding-left: 16px">
                             <span class="_bold" ng-if="task.timeEstimates.others_time_estimate > 59">
@@ -47,12 +49,20 @@
                  style="background-color: #FFF8E1; padding: 8px; min-height: 24px; border-radius: 2px; line-height: 24px"
                  ng-if="(task.return_feedback || task.is_qualified==false || task.rejected ) && !task.loading">
                 <div ng-if="task.return_feedback" style="padding-left: 8px; padding-right: 8px">
+                    <div>This task has been returned to you for revision by the requester.
+                        Please update your submission and
+                        then
+                        re-submit. <br/>
+                        Their comment: "{{ task.return_feedback }}"
+                    </div>
+                    <div ng-if="task.hasIframe">
+                        If you don't see what you previously entered in the forms of this task, report it by sending an email to
+                        support@daemo.org including the url to this task.
+                        After doing so click the button below to mark this task as submitted. We will contact the requester and ask them to fix it.
+                        <br/><md-button ng-click="task.overrideReturn()">Undo Return</md-button>
 
-                    This task has been returned to you for revision by the requester.
-                    Please update your submission and
-                    then
-                    re-submit. <br/>
-                    Their comment: "{{ task.return_feedback }}"
+                    </div>
+
                 </div>
                 <div ng-if="task.is_qualified==false">The requester has prevented you from doing this task — skip to
                     the next available one. Requesters do this, for example, to let you review other workers'

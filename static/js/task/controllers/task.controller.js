@@ -36,6 +36,8 @@
         self.getTimeFormat = getTimeFormat;
         self.isReadyToLaunch = null;
         self.feedback = null;
+        self.overrideReturn = overrideReturn;
+        self.hasIframe = false;
         self.reject_reason = {
             REASON_LOW_PAY: 1,
             REASON_INAPPROPRIATE: 2,
@@ -88,6 +90,7 @@
                         self.auto_accept = false;
                     }
                     getTimeEstimates();
+                    self.hasIframe = $filter('filter')(self.taskData.template.items, {type: 'iframe'}).length > 0;
                     Project.getFeedback(data[0].project).then(
                         function success(data) {
                             self.feedbackId = data[0].comment.id;
@@ -391,6 +394,16 @@
                 }
             });
             return results;
+        }
+
+        function overrideReturn() {
+            Task.overrideReturn(self.task_worker_id).then(
+                function success(data) {
+                    $state.go('task_feed');
+                },
+                function error(errData) {
+                    $mdToast.showSimple('An error occurred while reporting the returned task.');
+                });
         }
 
 

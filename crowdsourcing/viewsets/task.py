@@ -1,15 +1,16 @@
 import datetime
 import json
-from urlparse import urlsplit
 from decimal import Decimal, ROUND_UP
+from urlparse import urlsplit
+
 import trueskill
+from django.conf import settings
 from django.db import connection
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.timezone import utc
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+from hashids import Hashids
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -17,8 +18,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
-from django.conf import settings
-from hashids import Hashids
 
 from crowdsourcing import constants
 from crowdsourcing.exceptions import daemo_error
@@ -31,8 +30,8 @@ from crowdsourcing.serializers.task import *
 from crowdsourcing.tasks import update_worker_cache, refund_task, send_return_notification_email
 from crowdsourcing.utils import get_model_or_none, hash_as_set, \
     get_review_redis_message, hash_task
-from mturk.tasks import mturk_hit_update, mturk_approve, mturk_reject
 from crowdsourcing.validators.project import validate_account_balance
+from mturk.tasks import mturk_hit_update, mturk_approve, mturk_reject
 
 
 def setup_peer_review(review_project, task_workers, is_inter_task, rerun_key, ids_hash):
@@ -813,6 +812,16 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['post'], url_path='reject')
     def reject(self, request, *args, **kwargs):
         return Response({})
+
+    @detail_route(methods=['post'], url_path='override-return')
+    def override_return(self, request, *args, **kwargs):
+        instance = self.queryset.filter(pk=kwargs.get('pk'), worker=request.user).first()
+        if instance is None:
+            return Response({"message": "Assignment not found!"}, status=status.HTTP_404_NOT_FOUND)
+        instance.submitted_at = timezone.now()
+        instance.status = TaskWorker.STATUS_SUBMITTED
+        instance.save()
+        return Response({"message": "Assignment updated successfully!"})
 
 
 class TaskWorkerResultViewSet(viewsets.ModelViewSet):

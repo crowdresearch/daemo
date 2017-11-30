@@ -35,7 +35,8 @@
             relaunchAll: relaunchAll,
             getOtherResponses: getOtherResponses,
             attachFile: attachFile,
-            reject: reject
+            reject: reject,
+            overrideReturn: overrideReturn
         };
 
         function attachFile(task_worker_id, template_item_id, file_id) {
@@ -251,6 +252,14 @@
                 url: taskWorkerBaseUrl + pk + '/reject/',
                 method: 'POST',
                 data: data
+            };
+            return HttpService.doRequest(settings);
+        }
+        function overrideReturn(pk) {
+            var settings = {
+                url: taskWorkerBaseUrl + pk + '/override-return/',
+                method: 'POST',
+                data: {}
             };
             return HttpService.doRequest(settings);
         }

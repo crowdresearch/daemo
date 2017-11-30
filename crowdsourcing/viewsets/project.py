@@ -304,7 +304,7 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
                end payout_available_by,
                max(submitted_at) last_submitted_at
             FROM (SELECT
-                    p.group_id                                                                      id,
+                    p.id                                                                      id,
                     p.name,
                     p.owner_id,
                     p.status,
@@ -335,11 +335,11 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
                     INNER JOIN crowdsourcing_task t ON tw.task_id = t.id
                     INNER JOIN crowdsourcing_project p ON p.id = t.project_id
                     inner join crowdsourcing_stripecustomer sc on sc.owner_id = p.owner_id
-                    inner join crowdsourcing_stripecharge scharge on scharge.customer_id=sc.id
+                    left outer join crowdsourcing_stripecharge scharge on scharge.customer_id=sc.id
                     and scharge.created_at < p.revised_at
                   WHERE tw.status not in ((%(skipped)s), (%(expired)s))
                   AND tw.worker_id = (%(worker_id)s) AND p.is_review = FALSE
-                  GROUP BY p.group_id,
+                  GROUP BY p.id,
                     p.name, p.owner_id, p.status, p.price,
                    tw.status, tw.is_paid, p.timeout, tw.started_at, tw.created_at, tw.submitted_at, t.price
                   ) tw
