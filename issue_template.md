@@ -1,9 +1,11 @@
 ### The problem
-Replace this text with a clear statement of a problem including any relevant supporting files ([e.g.](https://github.com/crowdresearch/daemo/issues/1017)). If its a software abnormality, explain how it should act, how it does act, and how to reproduce it.
+1. Replace this text with a clear statement of a problem (e.g. #1017) including any relevant supporting files. If its a software abnormality, explain how it should act, how it does act, and how to reproduce it.
+2. Add a title in the field above.
+
+**To report a bug**, not a `proposal`, then simply complete the `problem` section and remove the rest of the template.
 
 ### The proposal
-Replace this text with a clear statement the proposed approach including any relevant supporting files ([e.g.](https://github.com/crowdresearch/daemo/issues/1017)).
-
-It can strengthen your proposal to include *pros* and *cons* and your thoughts about the *implications* (short and long term) of it being executed.
-
-**Note:** if this is a bug, not a `proposal`, then simply complete the `problem` section and remove the rest of the template. 
+3. Replace this text with a clear statement the proposed approach (e.g. #1017) including any relevant supporting files. It can strengthen your proposal to include *pros* and *cons* and your thoughts about the *implications* (short and long term) of it being executed.
+- - -
+#### Do not remove  
+**To break consensus** use [this template](https://gist.githubusercontent.com/markwhiting/ea8875602acd11e79002763735701503/raw/a8da103e23c07b74b4007459170104af04e38a33/break_consensus.md). You may also install this template to your account by following [these instructions](https://help.github.com/articles/creating-a-saved-reply/).
