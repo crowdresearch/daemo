@@ -25,7 +25,8 @@
                             <br/>
                             <span>"max_length"</span>: integer, <br/>
                             <span>"min_length"</span>: integer, <br/>
-                            <span>"placeholder"</span>: string
+                            <span>"placeholder"</span>: string, <br/>
+                            <span>"src"</span>: string
                         </div>
 
                         }
@@ -39,7 +40,7 @@
             <h1>Template Items: list</h1>
             <div>Lists the items by template ID.</div>
             <h2>Request</h2>
-            <div class="_snippet">GET /v1/template-items/</div>
+            <div class="_snippet">GET /v1/template-items/?template_id={TEMPLATE_ID}</div>
             <h2>Response</h2>
             <div class="_snippet">
                 {{ '{' }} <br/>
@@ -124,7 +125,8 @@
                             <br/>
                             <span>"max_length"</span>: integer, <br/>
                             <span>"min_length"</span>: integer, <br/>
-                            <span>"placeholder"</span>: string
+                            <span>"placeholder"</span>: string, <br/>
+                            <span>"src"</span>: string
                         </div>
 
                         }

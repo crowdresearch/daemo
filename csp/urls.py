@@ -25,6 +25,8 @@ router = SimpleRouter(trailing_slash=True)
 router.register(r'projects', ProjectViewSet)
 router.register(r'tasks', TaskViewSet)
 router.register(r'assignments', TaskWorkerViewSet)
+router.register(r'templates', TemplateViewSet)
+router.register(r'template-items', TemplateItemViewSet)
 
 router.register(r'profile', UserProfileViewSet)
 router.register(r'user', UserViewSet)

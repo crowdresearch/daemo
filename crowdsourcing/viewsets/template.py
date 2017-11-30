@@ -1,16 +1,32 @@
-from rest_framework import viewsets, status, serializers
-from rest_framework.response import Response
 from django.db import transaction
+from rest_framework import mixins
+from rest_framework import viewsets, status, serializers
+from rest_framework.decorators import detail_route
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from crowdsourcing.serializers.template import TemplateItemSerializer, TemplateItemPropertiesSerializer, \
     TemplateSerializer
 
 
-class TemplateViewSet(viewsets.ModelViewSet):
+class TemplateViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin,
+                      mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
     from crowdsourcing.models import Template
 
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        return Response(self.serializer_class(instance=request.user.templates.all().order_by('-id'), many=True).data)
+
+    @detail_route(methods=['get'])
+    def items(self, request, *args, **kwargs):
+        instance = self.queryset.filter(owner=request.user, id=kwargs.get('pk')).first()
+        if instance is None:
+            return Response({"message": "Template not found!"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(TemplateItemSerializer(instance=instance.items.all(), many=True).data)
 
 
 class TemplateItemViewSet(viewsets.ModelViewSet):
@@ -18,6 +34,17 @@ class TemplateItemViewSet(viewsets.ModelViewSet):
 
     queryset = TemplateItem.objects.all()
     serializer_class = TemplateItemSerializer
+
+    def list(self, request, *args, **kwargs):
+        template_id = request.query_params.get('template_id')
+        items = self.queryset.filter(template_id=template_id, template__owner=request.user)
+        response = {
+            "count": len(self.serializer_class(instance=items, many=True).data),
+            "next": None,
+            "previous": None,
+            "results": self.serializer_class(instance=items, many=True).data
+        }
+        return Response(response)
 
     def update(self, request, *args, **kwargs):
         with transaction.atomic():
@@ -31,7 +58,9 @@ class TemplateItemViewSet(viewsets.ModelViewSet):
         return Response(data={"message": "Item updated successfully"}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
-        item = self.get_object()
+        item = self.queryset.filter(template__owner=request.user, id=kwargs.get('pk')).first()
+        if item is None:
+            return Response({"message": "Item not found!"}, status.HTTP_404_NOT_FOUND)
         if item.successors.all().count() > 0:
             item.successors.all().update(predecessor=item.predecessor)
 
