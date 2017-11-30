@@ -435,6 +435,7 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
                              INNER JOIN crowdsourcing_project p0 ON p0.id=p_max.id
                            GROUP BY p_max.id, p0.repetition) t
                 ON t.project_id = p.id
+                where p.deleted_at is NULL 
             ORDER BY id DESC;
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})

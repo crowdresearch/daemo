@@ -110,7 +110,7 @@
                     <span>"name"</span>: string, <br/>
                     <span>"type"</span>: string, <br/>
                     <span>"sub_type"</span>: string, <br/>
-                    <span>"position"</span>: integer, <br/>
+                    <span>"predecessor"</span>: integer, <br/>
                     <span>"required"</span>: boolean, <br/>
                     <span>"template"</span>: integer, <br/>
                     <span>"aux_attributes"</span>:
@@ -148,15 +148,112 @@
                     <tr>
                         <td>name</td>
                         <td>string</td>
-                        <td>A name for this template.</td>
+                        <td>A name for this template item.</td>
                     </tr>
                     <tr>
-                        <td>items</td>
-                        <td>list of TemplateItem Resource</td>
-                        <td>List of template Items which are part of this template.
+                        <td>type</td>
+                        <td>string</td>
+                        <td>Item type which maps to an HTML element, accepted values are: text, instructions,
+                            file_upload, iframe, audio, image, radio, select_list, checkbox
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>predecessor</td>
+                        <td>integer</td>
+                        <td>The id of the item which comes before this item (the predecessor) which determines the position in the template.
                         </td>
                     </tr>
 
+                    <tr>
+                        <td>sub_type</td>
+                        <td>string</td>
+                        <td>If type is set to "text", you can provide a sub type for "number", "text_area" and "text"
+                            for a number field, a large text area and a regular text field respectively. Else it can be null.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>required</td>
+                        <td>boolean</td>
+                        <td>A flag which is used to make a field required or optional.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>template</td>
+                        <td>integer</td>
+                        <td>Id of the template this item is being added to.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>aux_attributes</td>
+                        <td>JSON object</td>
+                        <td>These properties vary depending on the type of the item, meaning that it is an unstructured object.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>aux_attributes.question.value</td>
+                        <td>string</td>
+                        <td>A question or header to be added at the top of the item, it can be static text or a key of the task data that you provide (use {} syntax for that).
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>aux_attributes.max_length</td>
+                        <td>integer</td>
+                        <td>Optional: applies to items of type text, it defines the maximum number of characters that the user can enter as a response.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>aux_attributes.min_length</td>
+                        <td>integer</td>
+                        <td>Optional: applies to items of type text, it defines the minimum number of characters that the user can enter as a response.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>aux_attributes.placeholder</td>
+                        <td>string</td>
+                        <td>Optional: applies to items of type text, a placeholder for the text field.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>aux_attributes.src</td>
+                        <td>string</td>
+                        <td>Required for iframe, audio, image: the url source for this element, it can be static or a variable coming from your task data, or a mix of both.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>aux_attributes.layout</td>
+                        <td>string</td>
+                        <td>Required for items of type checkbox and radio: accepted values are "row" and "column" which sets the orientation of the options.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>aux_attributes.shuffle_options</td>
+                        <td>boolean</td>
+                        <td>Required for items of type checkbox, radio and select_list: if set to true the options will be shuffled randomly every time they displayed to the user.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>aux_attributes.options</td>
+                        <td>list of objects</td>
+                        <td>Required for items of type checkbox, radio and select_list: a list of options which will be used to generate the html element.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>aux_attributes.options.value</td>
+                        <td>string</td>
+                        <td>Value of the selection option which will be displayed to the user, this will also be the value of the html element for that option, variables can also be used here.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>aux_attributes.options.position</td>
+                        <td>integer</td>
+                        <td>Position of this option in the list.
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
