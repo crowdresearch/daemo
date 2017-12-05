@@ -1,11 +1,10 @@
 ### The problem
-1. Replace this text with a clear statement of a problem (e.g. #1017) including any relevant supporting files. If its a software abnormality, explain how it should act, how it does act, and how to reproduce it.
-2. Add a title in the field above.
-
-**To report a bug**, not a `proposal`, then simply complete the `problem` section and remove the rest of the template.
+1. Replace this text with a clear statement of the problem (e.g. #1017) including any relevant supporting files. If its a software abnormality, explain how it should act, how it does act, and how to reproduce it.
+2. Add a title in the field above that consisely summarizes the problem.
 
 ### The proposal
-3. Replace this text with a clear statement the proposed approach (e.g. #1017) including any relevant supporting files. It can strengthen your proposal to include *pros* and *cons* and your thoughts about the *implications* (short and long term) of it being executed.
+3. If you have a solution to this problem and you will implement it, continue, otherwise remove the **proposal** section.
+4. Replace this text with a clear statement of the solution you propose to implement, including any relevant supporting files. It can strengthen your proposal to include *pros* and *cons* and your thoughts about the *implications* (short and long term) of it being executed.
 
 <!--- Do not delete this section --->
 - - -
