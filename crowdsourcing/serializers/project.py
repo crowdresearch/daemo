@@ -1,8 +1,8 @@
 import copy
-import numpy as np
 from decimal import Decimal
+
+import numpy as np
 from django.db import transaction
-from crowdsourcing.utils import hash_task
 from django.db.models import Q, F
 from django.utils import timezone
 from rest_framework import serializers
@@ -11,14 +11,14 @@ from rest_framework.exceptions import ValidationError
 from crowdsourcing import models
 from crowdsourcing.crypto import to_hash
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
+from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.serializers.message import CommentSerializer
 from crowdsourcing.serializers.task import TaskSerializer, TaskCommentSerializer
 from crowdsourcing.serializers.template import TemplateSerializer, TemplateItemSerializer
-from crowdsourcing.serializers.file import BatchFileSerializer
 from crowdsourcing.tasks import update_project_boomerang
 from crowdsourcing.utils import generate_random_id
+from crowdsourcing.utils import hash_task
 from crowdsourcing.validators.project import ProjectValidator
-from mturk.tasks import mturk_update_status
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
@@ -106,9 +106,8 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
         template_items = template_initial['items'] if template_initial else []
 
         template = {
-            "name": template_initial.get('name',
-                                         generate_random_id()) if template_initial
-                                                                  is not None else 't_' + generate_random_id(),
+            "name": template_initial.get('name', generate_random_id()
+                                         ) if template_initial is not None else 't_' + generate_random_id(),
             "items": template_items
         }
         if 'post_mturk' in self.validated_data:

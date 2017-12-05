@@ -33,7 +33,7 @@ def get_pk(id_or_hash):
     try:
         project_id = int(id_or_hash)
         return project_id, False
-    except:
+    except Exception:
         return to_pk(id_or_hash), True
 
 

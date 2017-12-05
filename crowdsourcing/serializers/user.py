@@ -148,7 +148,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
                                    password=self.initial_data.get('password1'),
                                    active=True,
                                    approved=True)
-            except:
+            except Exception:
                 print("Failed to create Discourse user!")
 
         return user

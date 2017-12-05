@@ -72,8 +72,8 @@ class MTurkProvider(object):
             requirement = None
             if item.expression['attribute'] == 'location':
                 op = OP_IN if item.expression['operator'] == 'in' else OP_NOT_IN
-                requirement = MultiLocaleRequirement(op, [l.strip() for l in item.expression['value'] if
-                                                          l is not None and l != ''])
+                requirement = MultiLocaleRequirement(op, [val.strip() for val in item.expression['value'] if
+                                                          val is not None and val != ''])
             elif item.expression['attribute'] == 'approval_rate':
                 op = OP_GT if item.expression['operator'] == 'gt' else OP_LT
                 requirement = PercentAssignmentsApprovedRequirement(op, item.expression['value'])

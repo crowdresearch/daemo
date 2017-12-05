@@ -85,7 +85,7 @@ def expire_tasks():
                 INNER JOIN crowdsourcing_task t ON  tw.task_id = t.id
                 INNER JOIN crowdsourcing_project p ON t.project_id = p.id
                 INNER JOIN crowdsourcing_taskworkersession sessions ON sessions.task_worker_id = tw.id
-                WHERE tw.status=%(in_progress)s 
+                WHERE tw.status=%(in_progress)s
                 GROUP BY tw.id, p.id
                 HAVING sum(coalesce(sessions.ended_at, now()) - sessions.started_at) >
                     coalesce(p.timeout, INTERVAL '24 hour'))
@@ -137,7 +137,7 @@ def auto_approve_tasks():
             INNER JOIN auth_user u_worker ON tw.worker_id = u_worker.id
             WHERE tw.submitted_at + INTERVAL %(auto_approve_freq)s < NOW()
             AND tw.status=%(submitted)s)
-            UPDATE crowdsourcing_taskworker tw_up SET status=%(accepted)s, approved_at = %(approved_at)s, 
+            UPDATE crowdsourcing_taskworker tw_up SET status=%(accepted)s, approved_at = %(approved_at)s,
             auto_approved=TRUE
         FROM taskworkers
         WHERE taskworkers.id=tw_up.id
@@ -448,7 +448,7 @@ def update_feed_boomerang():
                WHERE p.status = 3 AND p.deleted_at IS NULL
                GROUP BY p.id, p.name, owner_id, p.min_rating, p.group_id, p.price, aux_attributes) available
           INNER JOIN auth_user u_workers ON TRUE
-          INNER JOIN crowdsourcing_userprofile p_workers ON p_workers.user_id = u_workers.id 
+          INNER JOIN crowdsourcing_userprofile p_workers ON p_workers.user_id = u_workers.id
           AND p_workers.is_worker IS TRUE
           INNER JOIN get_worker_ratings(u_workers.id) worker_ratings
             ON worker_ratings.requester_id = available.owner_id

@@ -17,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from yapf.yapflib.yapf_api import FormatCode
 
-from crowdsourcing.models import Category, Project, Task, TaskWorker, TaskWorkerResult
+from crowdsourcing.models import Project, Task, TaskWorker, TaskWorkerResult
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
 from crowdsourcing.serializers.task import *
@@ -229,7 +229,6 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
 
     @detail_route(methods=['POST'])
     def publish(self, request, pk=None, *args, **kwargs):
-        num_rows = request.data.get('num_rows', 0)
         project_id, is_hash = get_pk(pk)
         filter_by = {}
         if is_hash:
@@ -435,7 +434,7 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
                              INNER JOIN crowdsourcing_project p0 ON p0.id=p_max.id
                            GROUP BY p_max.id, p0.repetition) t
                 ON t.project_id = p.id
-                where p.deleted_at is NULL 
+                where p.deleted_at is NULL
             ORDER BY id DESC;
         '''
         projects = Project.objects.raw(query, params={'owner_id': request.user.id})

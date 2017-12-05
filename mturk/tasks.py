@@ -214,7 +214,7 @@ def calculate_cumulative_ratings(owner_id, project_id):
 
     try:
         mat = IterativeSVD(verbose=False, init_fill_method="mean").complete(matrix)
-    except:
+    except Exception:
         mat = SoftImpute(verbose=False, init_fill_method="mean").complete(matrix)
 
     data['score'] = mat.mean(axis=ROW_WISE)

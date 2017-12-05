@@ -106,7 +106,6 @@ class CommentSerializer(DynamicFieldsModelSerializer):
     def get_sender_alias(self, obj):
         return obj.sender.profile.handle
 
-
     def get_posted_time(self, obj):
         from crowdsourcing.utils import get_time_delta
         delta = get_time_delta(obj.created_at)

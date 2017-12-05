@@ -417,7 +417,7 @@ class ProjectQueryset(models.query.QuerySet):
             up.handle requester_handle, p.published_at
             FROM crowdsourcing_project p
             INNER JOIN crowdsourcing_userprofile up on up.user_id = p.owner_id
-            INNER JOIN projects ON projects.project_id = p.id ORDER BY case when %(sort_by)s='-boomerang' 
+            INNER JOIN projects ON projects.project_id = p.id ORDER BY case when %(sort_by)s='-boomerang'
             then requester_rating when %(sort_by)s='-available_tasks' then available_tasks
               when %(sort_by)s='-published_at' then 12 when %(sort_by)s='-price' then p.price
                 end desc nulls last, p.id desc;

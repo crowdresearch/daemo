@@ -1,7 +1,6 @@
 import datetime
 import json
 from decimal import Decimal, ROUND_UP
-from urlparse import urlsplit
 
 import trueskill
 from django.conf import settings
@@ -283,7 +282,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                     "next": None,
                     "previous": None
                 })
-        except:
+        except Exception:
             return Response([])
 
     @detail_route(methods=['get'], url_path='assignment-results', permission_classes=[IsTaskOwner])
@@ -789,7 +788,7 @@ class TaskWorkerViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @detail_route(methods=['post'])
-    def reject(self, request, *args, **kwargs):
+    def collective_reject(self, request, *args, **kwargs):
         task_worker = self.get_object()
         serializer = CollectiveRejectionSerializer(data=request.data)
         if serializer.is_valid():
@@ -1025,13 +1024,13 @@ class ExternalSubmit(APIView):
             if len(identifier_hash.decode(identifier)) == 0:
                 raise serializers.ValidationError(detail=daemo_error("Invalid identifier"))
             task_worker_id, task_id, template_item_id = identifier_hash.decode(identifier)
-            template_item = models.TemplateItem.objects.get(id=template_item_id)
-            task = models.Task.objects.get(id=task_id)
-            source_url = None
-            if template_item.aux_attributes['src']:
-                source_url = urlsplit(template_item.aux_attributes['src'])
-            else:
-                source_url = urlsplit(task.data[template_item.aux_attributes['data_source']])
+            # template_item = models.TemplateItem.objects.get(id=template_item_id)
+            # task = models.Task.objects.get(id=task_id)
+            # source_url = None
+            # if template_item.aux_attributes['src']:
+            #     source_url = urlsplit(template_item.aux_attributes['src'])
+            # else:
+            #     source_url = urlsplit(task.data[template_item.aux_attributes['data_source']])
             # if 'HTTP_REFERER' not in request.META.keys():
             #     return Response(data={"message": "Missing referer"}, status=status.HTTP_403_FORBIDDEN)
             # referer_url = urlsplit(request.META['HTTP_REFERER'])
