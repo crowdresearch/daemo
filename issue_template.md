@@ -6,6 +6,7 @@
 
 ### The proposal
 3. Replace this text with a clear statement the proposed approach (e.g. #1017) including any relevant supporting files. It can strengthen your proposal to include *pros* and *cons* and your thoughts about the *implications* (short and long term) of it being executed.
+
+<!--- Do not delete this section --->
 - - -
-#### Do not remove  
 **To break consensus** use [this template](https://gist.githubusercontent.com/markwhiting/ea8875602acd11e79002763735701503/raw/a8da103e23c07b74b4007459170104af04e38a33/break_consensus.md). You may also install this template to your account by following [these instructions](https://help.github.com/articles/creating-a-saved-reply/).
