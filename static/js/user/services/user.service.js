@@ -46,7 +46,8 @@
             getNotifications: getNotifications,
             isHandleUnique: isHandleUnique,
             updateHandle: updateHandle,
-            getAvailableWorkerCount: getAvailableWorkerCount
+            getAvailableWorkerCount: getAvailableWorkerCount,
+            isWhitelisted: isWhitelisted
         };
 
 
@@ -321,6 +322,14 @@
         function getAvailableWorkerCount() {
             var settings = {
                 url: '/api/user/available-workers/',
+                method: 'GET'
+            };
+            return HttpService.doRequest(settings);
+        }
+
+        function isWhitelisted() {
+            var settings = {
+                url: '/api/user/is-whitelisted/',
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

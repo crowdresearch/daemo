@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from crowdsourcing import constants
 from crowdsourcing import models
 from crowdsourcing.exceptions import daemo_error
+from crowdsourcing.models import RegistrationWhitelist
 from crowdsourcing.payment import Stripe
 from crowdsourcing.permissions.user import CanCreateAccount
 from crowdsourcing.redis import RedisProvider
@@ -35,6 +36,14 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
     lookup_value_regex = '[^/]+'
     lookup_field = 'username'
     permission_classes = [CanCreateAccount]
+
+    @staticmethod
+    def is_whitelisted(user):
+        return RegistrationWhitelist.objects.filter(email=user.email).count() > 0
+
+    @list_route(methods=['get'], permission_classes=[IsAuthenticated], url_path='is-whitelisted')
+    def is_whitelisted_route(self, request, *args, **kwargs):
+        return Response({"result": self.is_whitelisted(request.user)})
 
     @list_route(methods=['get'], permission_classes=[IsAuthenticated], url_path='available-workers')
     def available_workers(self, request, *args, **kwargs):
@@ -309,7 +318,10 @@ class UserProfileViewSet(mixins.RetrieveModelMixin,
                 raise serializers.ValidationError(detail=card_serializer.errors)
             credit_card = request.data.get('credit_card')
         if is_worker:
-            # TODO add support for other countries
+            if not UserViewSet.is_whitelisted(request.user):
+                raise serializers.ValidationError(
+                    detail=daemo_error("You are not allowed to sign up as a worker at this time."))
+                # TODO add support for other countries
             bank_data = request.data.get('bank', {})
             bank_data.update({'currency': 'usd'})
             bank_data.update({'country': 'US'})

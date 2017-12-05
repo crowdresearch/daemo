@@ -43,6 +43,7 @@
         vm.updatePartial = updatePartial;
         vm.savePaymentInfo = savePaymentInfo;
         vm.saveInitialData = saveInitialData;
+        vm.isWhitelisted = false;
         self.financial_data = null;
         vm.use_for = null;
         vm.payment = {
@@ -133,6 +134,7 @@
             // });
 
             getProfile();
+            isWhitelisted()
         }
 
         function addressSearch(address) {
@@ -252,6 +254,18 @@
                         vm.user.unspecified_responses = {};
                     }
                 });
+        }
+
+        function isWhitelisted() {
+            User.isWhitelisted().then(
+                function success(response) {
+                    vm.isWhitelisted = response[0].result;
+                },
+                function error(response) {
+                }
+            ).finally(function () {
+
+            });
         }
 
         function jobTitleSearch(query) {

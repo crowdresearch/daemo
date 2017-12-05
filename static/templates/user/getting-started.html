@@ -145,9 +145,12 @@
                                 <md-radio-button value="is_requester">I am a requester: I will pay people to complete my
                                     tasks
                                 </md-radio-button>
-                                <md-radio-button value="is_worker">I am a worker: I will get paid for completing tasks
+                                <md-radio-button value="is_worker" ng-disabled="{{ !user.isWhitelisted }}">I am a worker: I
+                                    will get paid for completing tasks
                                 </md-radio-button>
-                                <md-radio-button value="is_both">I am both a worker and a requester</md-radio-button>
+                                <md-radio-button value="is_both" ng-disabled="{{ !user.isWhitelisted }}">I am both a worker
+                                    and a requester
+                                </md-radio-button>
                             </md-radio-group>
                         </div>
                         <div style="padding-bottom: 8px">
