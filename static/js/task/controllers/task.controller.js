@@ -194,7 +194,7 @@
             var missing = false;
 
             angular.forEach(itemsToSubmit, function (obj) {
-                if ((!obj.answer || obj.answer === "") && obj.type !== 'checkbox') {
+                if ((!obj.answer || obj.answer === "") && obj.type !== 'checkbox' && obj.answer !== 0) {
                     if (obj.required) {
                         missing = true;
                     }
