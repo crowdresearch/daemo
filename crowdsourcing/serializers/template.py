@@ -44,7 +44,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'name', 'items')
         read_only_fields = ('items',)
 
-    def create(self, with_defaults, is_review, *args, **kwargs):
+    def create(self, with_defaults=True, is_review=False, *args, **kwargs):
         items = self.validated_data.pop('items') if 'items' in self.validated_data else []
         template = models.Template.objects.create(owner=kwargs['owner'], **self.validated_data)
         template.group_id = template.id
