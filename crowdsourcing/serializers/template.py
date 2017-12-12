@@ -19,6 +19,8 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
     def create(self, *args, **kwargs):
         item = models.TemplateItem.objects.create(**self.validated_data)
         item.group_id = item.id
+        if item.type in ['radio', 'checkbox', 'select_list', 'file_upload', 'text']:
+            item.role = models.TemplateItem.ROLE_INPUT
         item.save()
         return item
 

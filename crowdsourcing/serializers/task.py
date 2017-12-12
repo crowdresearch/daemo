@@ -452,7 +452,7 @@ class TaskSerializer(DynamicFieldsModelSerializer):
                     elif result.template_item_id == item['id']:
                         item['answer'] = result.result
 
-        template['items'] = sorted(template['items'], key=lambda k: k['position'])
+        # template['items'] = sorted(template['items'], key=lambda k: k['position'])
         return template
 
     @staticmethod
