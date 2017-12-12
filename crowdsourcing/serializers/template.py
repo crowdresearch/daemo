@@ -1,9 +1,11 @@
 import copy
-from crowdsourcing import models
+
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
+from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.utils import create_copy
-from rest_framework.exceptions import ValidationError
 
 
 class TemplateItemSerializer(DynamicFieldsModelSerializer):
@@ -11,7 +13,7 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.TemplateItem
-        fields = ('id', 'name', 'type', 'sub_type', 'position', 'template',
+        fields = ('id', 'name', 'type', 'sub_type', 'template',
                   'role', 'required', 'aux_attributes', 'predecessor')
 
     def create(self, *args, **kwargs):
@@ -36,7 +38,7 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
 
 class TemplateSerializer(DynamicFieldsModelSerializer):
     items = TemplateItemSerializer(many=True, required=False, fields=('id', 'name', 'type', 'sub_type',
-                                                                      'position', 'role', 'required',
+                                                                      'role', 'required',
                                                                       'aux_attributes', 'predecessor'))
 
     class Meta:

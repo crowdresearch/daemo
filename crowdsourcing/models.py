@@ -558,7 +558,7 @@ class TemplateItem(TimeStampable, Revisable):
     role = models.CharField(max_length=16, choices=ROLE, default=ROLE_DISPLAY)
     type = models.CharField(max_length=16, db_index=True)
     sub_type = models.CharField(max_length=16, null=True)
-    position = models.IntegerField()
+    position = models.IntegerField(null=True)
     required = models.BooleanField(default=True)
     predecessor = models.ForeignKey('self', null=True, related_name='successors', on_delete=models.SET_NULL,
                                     db_index=True)
