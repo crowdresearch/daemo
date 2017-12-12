@@ -1,14 +1,11 @@
 import json
 import math
-from decimal import Decimal, ROUND_UP
+from decimal import ROUND_UP
 from itertools import groupby
 from textwrap import dedent
 
-import numpy as np
 from django.conf import settings
-from crowdsourcing.discourse import DiscourseClient
 from django.db import connection
-from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework import mixins
 from rest_framework import status, viewsets
@@ -17,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from yapf.yapflib.yapf_api import FormatCode
 
+from crowdsourcing.discourse import DiscourseClient
 from crowdsourcing.models import Project, Task, TaskWorker, TaskWorkerResult
 from crowdsourcing.permissions.project import IsProjectOwnerOrCollaborator, ProjectChangesAllowed
 from crowdsourcing.serializers.project import *
@@ -1256,3 +1254,13 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
                                                            'created_at', 'updated_at', 'attachment',
                                                            'assignment_id')).data
         return Response(response_data)
+
+    @detail_route(methods=['post'], url_path='archive',
+                  permission_classes=[IsAuthenticated, IsProjectOwnerOrCollaborator])
+    def archive(self, request, *args, **kwargs):
+        with transaction.atomic():
+            project = self.queryset.select_for_update().filter(id=kwargs.get('pk')).first()
+            TaskWorker.objects.filter(task__project__group_id=project.group_id,
+                                      status__in=[TaskWorker.STATUS_SUBMITTED]).update(
+                status=TaskWorker.STATUS_ACCEPTED, approved_at=timezone.now(), auto_approved=True)
+        return Response({})
