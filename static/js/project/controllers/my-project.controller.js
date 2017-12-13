@@ -174,7 +174,7 @@
         }
 
         function deleteProject() {
-            Project.deleteInstance(self.projectToDelete.id).then(
+            Project.archive(self.projectToDelete.id).then(
                 function success(response) {
                     self.myProjects.splice(self.myProjects.findIndex(function (element, index, array) {
                         return element.id == self.projectToDelete.id;

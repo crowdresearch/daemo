@@ -1258,9 +1258,59 @@ class ProjectViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
     @detail_route(methods=['post'], url_path='archive',
                   permission_classes=[IsAuthenticated, IsProjectOwnerOrCollaborator])
     def archive(self, request, *args, **kwargs):
+        response_code = status.HTTP_200_OK
+        response_data = {"message": "Project archived successfully."}
         with transaction.atomic():
             project = self.queryset.select_for_update().filter(id=kwargs.get('pk')).first()
-            TaskWorker.objects.filter(task__project__group_id=project.group_id,
-                                      status__in=[TaskWorker.STATUS_SUBMITTED]).update(
-                status=TaskWorker.STATUS_ACCEPTED, approved_at=timezone.now(), auto_approved=True)
-        return Response({})
+            most_recent_revision = self.queryset.select_for_update().filter(group_id=project.group_id).order_by(
+                '-id').first()
+            if project.id != most_recent_revision.id:
+                response_code = status.HTTP_400_BAD_REQUEST
+                response_data = {"message": "Archiving an old revision is not allowed!"}
+            elif project.status == Project.STATUS_ARCHIVED:
+                response_code = status.HTTP_400_BAD_REQUEST
+                response_data = {"message": "This project has already been archived!"}
+            if response_code == status.HTTP_200_OK:
+                query = '''
+                    SELECT sum(greatest(0, coalesce(t.price, p.price) * (p.repetition) - paid_price))
+                    FROM crowdsourcing_task t INNER JOIN (SELECT
+                                                            group_id,
+                                                            max(id) id
+                                                          FROM crowdsourcing_task
+                                                          WHERE deleted_at IS NULL
+                                                          GROUP BY group_id) t_max ON t_max.id = t.id
+                      INNER JOIN crowdsourcing_project p ON p.id = t.project_id
+                      INNER JOIN (
+                                   SELECT
+                                     t.group_id,
+                                     sum(task_price) paid_price,
+                                     sum(t.others)   OTHERS
+                                   FROM (
+                                          SELECT
+                                            t.group_id,
+                                            CASE WHEN tw.id IS NOT NULL
+                                              THEN 1
+                                            ELSE 0 END OTHERS,
+                                            CASE WHEN tw.id IS NOT NULL
+                                              THEN coalesce(t.price, p1.price)
+                                            ELSE 0 END task_price
+                                          FROM crowdsourcing_task t
+                                            INNER JOIN crowdsourcing_project p1 ON p1.id = t.project_id
+                                            LEFT OUTER JOIN crowdsourcing_taskworker tw 
+                                            ON (t.id = tw.task_id AND tw.status NOT IN (4, 6, 7))
+                                          WHERE t.exclude_at IS NULL AND t.deleted_at IS NULL) t
+                                   GROUP BY group_id
+                                 ) t_count ON t_count.group_id = t.group_id
+                    WHERE p.id = %(project_id)s;
+                '''
+                params = {
+                    "project_id": project.id
+                }
+                cursor = connection.cursor()
+                cursor.execute(query, params)
+                refund_amount = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
+                project.owner.stripe_customer.account_balance += refund_amount * 100  # cents
+                project.owner.stripe_customer.save()
+                project.amount_due = 0
+                project.save()
+        return Response(response_data, response_code)

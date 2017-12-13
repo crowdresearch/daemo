@@ -16,6 +16,7 @@
             create: create,
             update: update,
             deleteInstance: deleteInstance,
+            archive: archive,
             attachFile: attachFile,
             deleteFile: deleteFile,
             fork: fork,
@@ -174,6 +175,15 @@
             };
             return HttpService.doRequest(settings);
         }
+
+        function archive(pk) {
+            var settings = {
+                url: baseUrl + pk + '/archive/',
+                method: 'POST'
+            };
+            return HttpService.doRequest(settings);
+        }
+
 
 
         function attachFile(pk, data) {
