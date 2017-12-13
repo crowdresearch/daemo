@@ -1,4 +1,5 @@
 import StringIO
+import json
 import zipfile
 from collections import OrderedDict
 from django.http import HttpResponse
@@ -92,11 +93,17 @@ class FileViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Des
                      'answer' in x and x['answer']])
             }
         elif result.template_item.type == 'iframe' and isinstance(result.result, list):
-            return {
-                "result": result.result
-            }
+            try:
+                return {"result": json.dumps(result.result)}
+            except Exception:
+                return {
+                    "result": result.result
+                }
         elif result.template_item.type == 'iframe' and isinstance(result.result, dict):
-            return result.result
+            try:
+                return json.dumps(result.result)
+            except Exception:
+                return result.result
         else:
             return {
                 str(field_name): result.result
