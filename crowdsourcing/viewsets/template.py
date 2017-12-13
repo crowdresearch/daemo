@@ -18,6 +18,14 @@ class TemplateViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins
     serializer_class = TemplateSerializer
     permission_classes = [IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            instance = serializer.create(with_defaults=False, owner=request.user, is_review=False)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"id": instance.id})
+
     def list(self, request, *args, **kwargs):
         return Response(self.serializer_class(instance=request.user.templates.all().order_by('-id'), many=True).data)
 

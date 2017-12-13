@@ -59,6 +59,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
     has_review = serializers.BooleanField(required=False)
     payout_available_by = serializers.DateTimeField(required=False)
     last_submitted_at = serializers.DateTimeField(required=False)
+    template_id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = models.Project
@@ -70,13 +71,13 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                   'qualification', 'relaunch', 'group_id', 'revisions', 'hash_id', 'is_api_only', 'in_progress',
                   'awaiting_review', 'completed', 'review_price', 'returned', 'requester_handle',
                   'allow_price_per_task', 'task_price_field', 'discussion_link', 'aux_attributes',
-                  'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid',
+                  'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid', 'template_id',
                   'checked_out', 'publish_at', 'published_at', 'template_id', 'enable_boomerang', 'last_submitted_at')
         read_only_fields = (
             'created_at', 'updated_at', 'deleted_at', 'has_comments', 'available_tasks',
             'comments', 'template', 'is_api_only', 'discussion_link', 'aux_attributes',
             'payout_available_by', 'paid_count', 'expected_payout_amount', 'amount_paid', 'published_at',
-            'template_id', 'last_submitted_at')
+            'last_submitted_at')
 
         validators = [ProjectValidator()]
 
@@ -184,6 +185,7 @@ class ProjectSerializer(DynamicFieldsModelSerializer):
                                                                      self.instance.allow_price_per_task)
         self.instance.task_price_field = self.validated_data.get('task_price_field', self.instance.task_price_field)
         self.instance.enable_boomerang = self.validated_data.get('enable_boomerang', self.instance.enable_boomerang)
+        self.instance.template_id = self.validated_data.get('template_id', self.instance.template_id)
 
         self.instance.save()
         return self.instance

@@ -18,6 +18,7 @@
                     <span>"timeout"</span>: integer,<br/>
                     <span>"is_prototype"</span>: boolean, <br/>
                     <span>"allow_price_per_task"</span>: boolean, <br/>
+                    <span>"enable_boomerang"</span>: boolean, <br/>
                     <span>"task_price_field"</span>: string, <br/>
                     <span>"created_at"</span>: string,<br/>
                     <span>"updated_at"</span>: string
@@ -139,7 +140,11 @@
                         <td>integer</td>
                         <td>The time in minutes that a worker is allowed to keep this task in an accepted state.</td>
                     </tr>
-
+                    <tr>
+                        <td>enable_boomerang</td>
+                        <td>boolean</td>
+                        <td>A flag which is used to enable or disable the cascaded release of the project.</td>
+                    </tr>
                     <tr>
                         <td>template</td>
                         <td>JSON object</td>

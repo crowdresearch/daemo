@@ -406,7 +406,8 @@ class ProjectQueryset(models.query.QuerySet):
                                      ELSE worker_rating + 0.1 * worker_avg_rating END worker_rating
                                    FROM get_worker_ratings(%(worker_id)s)) worker_ratings
                     ON worker_ratings.requester_id = ratings.owner_id
-                       AND (worker_ratings.worker_rating >= ratings.min_rating or p.enable_boomerang is FALSE)
+                       AND (worker_ratings.worker_rating >= ratings.min_rating or p.enable_boomerang is FALSE 
+                       or p.owner_id = %(worker_id)s)
                 WHERE coalesce(p.deadline, NOW() + INTERVAL '1 minute') > NOW() AND p.status = 3 AND deleted_at IS NULL
                   AND (requester.is_denied = FALSE OR p.enable_blacklist = FALSE)
                   AND is_worker_qualified(quals.expressions, (%(worker_data)s)::JSON)
@@ -558,7 +559,7 @@ class TemplateItem(TimeStampable, Revisable):
     role = models.CharField(max_length=16, choices=ROLE, default=ROLE_DISPLAY)
     type = models.CharField(max_length=16, db_index=True)
     sub_type = models.CharField(max_length=16, null=True)
-    position = models.IntegerField()
+    position = models.IntegerField(null=True)
     required = models.BooleanField(default=True)
     predecessor = models.ForeignKey('self', null=True, related_name='successors', on_delete=models.SET_NULL,
                                     db_index=True)

@@ -1,9 +1,11 @@
 import copy
-from crowdsourcing import models
+
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
+from crowdsourcing import models
 from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.utils import create_copy
-from rest_framework.exceptions import ValidationError
 
 
 class TemplateItemSerializer(DynamicFieldsModelSerializer):
@@ -11,12 +13,14 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = models.TemplateItem
-        fields = ('id', 'name', 'type', 'sub_type', 'position', 'template',
+        fields = ('id', 'name', 'type', 'sub_type', 'template',
                   'role', 'required', 'aux_attributes', 'predecessor')
 
     def create(self, *args, **kwargs):
         item = models.TemplateItem.objects.create(**self.validated_data)
         item.group_id = item.id
+        if item.type in ['radio', 'checkbox', 'select_list', 'file_upload', 'text']:
+            item.role = models.TemplateItem.ROLE_INPUT
         item.save()
         return item
 
@@ -36,7 +40,7 @@ class TemplateItemSerializer(DynamicFieldsModelSerializer):
 
 class TemplateSerializer(DynamicFieldsModelSerializer):
     items = TemplateItemSerializer(many=True, required=False, fields=('id', 'name', 'type', 'sub_type',
-                                                                      'position', 'role', 'required',
+                                                                      'role', 'required',
                                                                       'aux_attributes', 'predecessor'))
 
     class Meta:
@@ -44,7 +48,7 @@ class TemplateSerializer(DynamicFieldsModelSerializer):
         fields = ('id', 'name', 'items')
         read_only_fields = ('items',)
 
-    def create(self, with_defaults, is_review, *args, **kwargs):
+    def create(self, with_defaults=True, is_review=False, *args, **kwargs):
         items = self.validated_data.pop('items') if 'items' in self.validated_data else []
         template = models.Template.objects.create(owner=kwargs['owner'], **self.validated_data)
         template.group_id = template.id
