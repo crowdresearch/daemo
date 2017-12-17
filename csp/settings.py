@@ -204,16 +204,20 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_REPLACE_HTTPS_REFERER = True
 # Use only to restrict to specific servers/domains
 
-# CORS_ORIGIN_WHITELIST = (
-#     'stanford-qa.com',
-# )
+CORS_ORIGIN_WHITELIST = (
+    # 'stanford-qa.com',
+    'forum.daemo.org',
+)
 
-CORS_URLS_REGEX = r'^/api/done/*$'
+CORS_URLS_REGEX = r'^/(api/done|v1/user/activity)/*$'
+
 CORS_ALLOW_METHODS = (
     'GET',
     'POST',
     'OPTIONS'
 )
+
+CORS_ALLOW_CREDENTIALS = True
 
 HALF_OFF = True
 NON_PROFIT_EMAILS = ['.edu', '.org']
