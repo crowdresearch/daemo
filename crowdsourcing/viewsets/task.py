@@ -265,6 +265,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     filter_params = ['project_id', 'rerun_key', 'batch_id']
+    permission_classes = [IsAuthenticated, ]
 
     def list(self, request, *args, **kwargs):
         try:
