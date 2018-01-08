@@ -568,7 +568,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
-    permission_classes = [IsQualified, ]
+    permission_classes = [IsAuthenticated, IsQualified]
 
     # permission_classes = [IsAuthenticated, HasExceededReservedLimit]
 
