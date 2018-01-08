@@ -280,7 +280,7 @@
 
         function addItem(data) {
             var settings = {
-                url: '/api/template-item/',
+                url: '/api/template-items/',
                 method: 'POST',
                 data: data
             };
@@ -289,7 +289,7 @@
 
         function updateItem(pk, data) {
             var settings = {
-                url: '/api/template-item/' + pk + '/',
+                url: '/api/template-items/' + pk + '/',
                 method: 'PUT',
                 data: data
             };
@@ -298,7 +298,7 @@
 
         function deleteItem(pk) {
             var settings = {
-                url: '/api/template-item/' + pk + '/',
+                url: '/api/template-items/' + pk + '/',
                 method: 'DELETE'
             };
             return HttpService.doRequest(settings);

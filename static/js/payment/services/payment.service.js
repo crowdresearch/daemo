@@ -27,7 +27,7 @@
 
         function createCharge(data) {
             var settings = {
-                url: '/api/charges/',
+                url: '/api/payments/',
                 method: 'POST',
                 data: data
             };

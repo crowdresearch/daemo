@@ -308,6 +308,12 @@
             templateUrl: '/static/templates/docs/template-items.html'
         };
 
+        var docsPayments = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/payments.html'
+        };
+
         var docsOAuth2 = {
             controller: 'DocsController',
             controllerAs: 'docs',
@@ -463,6 +469,13 @@
                 url: '/template-items',
                 views: {
                     'content': docsTemplateItems
+                },
+                authenticate: false
+            })
+            .state('docs.payments', {
+                url: '/payments',
+                views: {
+                    'content': docsPayments
                 },
                 authenticate: false
             })

@@ -248,7 +248,7 @@
         }
 
         function downloadResults() {
-            window.open('api/file/download-results/?project_id=' + self.resolvedData.id, '_self', '');
+            window.open('v1/files/download-results/?project_id=' + self.resolvedData.id, '_self', '');
         }
 
         function returnTask(taskWorker, worker_alias, e) {
