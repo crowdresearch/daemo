@@ -37,6 +37,7 @@ class QualificationViewSet(viewsets.ModelViewSet):
 class QualificationItemViewSet(viewsets.ModelViewSet):
     queryset = QualificationItem.objects.all()
     serializer_class = QualificationItemSerializer
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -64,6 +65,7 @@ class QualificationItemViewSet(viewsets.ModelViewSet):
 class WorkerACEViewSet(viewsets.ModelViewSet):
     queryset = WorkerAccessControlEntry.objects.all()
     serializer_class = WorkerACESerializer
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -95,6 +97,7 @@ class WorkerACEViewSet(viewsets.ModelViewSet):
 class RequesterACGViewSet(viewsets.ModelViewSet):
     queryset = RequesterAccessControlGroup.objects.all()
     serializer_class = RequesterACGSerializer
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         data = request.data
