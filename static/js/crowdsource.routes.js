@@ -314,6 +314,12 @@
             templateUrl: '/static/templates/docs/payments.html'
         };
 
+        var docsRatings = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/ratings.html'
+        };
+
         var docsOAuth2 = {
             controller: 'DocsController',
             controllerAs: 'docs',
@@ -476,6 +482,13 @@
                 url: '/payments',
                 views: {
                     'content': docsPayments
+                },
+                authenticate: false
+            })
+            .state('docs.ratings', {
+                url: '/ratings',
+                views: {
+                    'content': docsRatings
                 },
                 authenticate: false
             })

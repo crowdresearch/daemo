@@ -6,16 +6,15 @@ from rest_framework.routers import SimpleRouter
 
 from crowdsourcing import views
 from crowdsourcing.viewsets.file import FileViewSet
-from crowdsourcing.viewsets.message import ConversationViewSet, MessageViewSet, RedisMessageViewSet, \
-    ConversationRecipientViewSet
+from crowdsourcing.viewsets.message import RedisMessageViewSet
 from crowdsourcing.viewsets.payment import ChargeViewSet, TransferViewSet
 from crowdsourcing.viewsets.project import *
 from crowdsourcing.viewsets.qualification import QualificationViewSet, RequesterACGViewSet, WorkerACEViewSet, \
     QualificationItemViewSet
-from crowdsourcing.viewsets.rating import WorkerRequesterRatingViewset, RatingViewset
+from crowdsourcing.viewsets.rating import RatingViewSet
 from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, TaskWorkerViewSet, \
     ExternalSubmit, ReturnFeedbackViewSet
-from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
+from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet, CountryViewSet, \
     CityViewSet
 from mturk import views as mturk_views
@@ -36,8 +35,7 @@ router.register(r'files', FileViewSet)
 router.register(r'profile', UserProfileViewSet)
 router.register(r'user', UserViewSet)
 router.register(r'preferences', UserPreferencesViewSet)
-router.register(r'worker-requester-rating', WorkerRequesterRatingViewset)
-router.register(r'rating', RatingViewset)
+router.register(r'ratings', RatingViewSet)
 
 router.register(r'country', CountryViewSet)
 router.register(r'city', CityViewSet)

@@ -34,12 +34,6 @@
         return RatingService;
 
 
-        /**
-         * @name getWorkerRatings
-         * @desc Get worker ratings.
-         * @returns {Promise}
-         * @memberOf crowdsource.rating.services.RatingService
-         */
         function getWorkerRatings() {
             var settings = {
                 url: '/api/rating/workers_reviews/',
@@ -67,7 +61,7 @@
 
         function submitRating(weight, entry, task) {
             var settings = {
-                url: '/api/worker-requester-rating/',
+                url: '/api/ratings/',
                 method: 'POST',
                 data: {
                     weight: weight,
@@ -81,7 +75,7 @@
 
         function updateProjectRating(weight, entry, project) {
             var settings = {
-                url: '/api/worker-requester-rating/by-project/',
+                url: '/api/ratings/by-project/',
                 method: 'POST',
                 data: {
                     weight: weight,
@@ -95,7 +89,7 @@
 
         function updateRating(weight, entry) {
             var settings = {
-                url: '/api/worker-requester-rating/' + entry.id + '/',
+                url: '/api/ratings/' + entry.id + '/',
                 method: 'PUT',
                 data: {
                     weight: weight
@@ -106,7 +100,7 @@
 
         function listByTarget(target, origin_type) {
             var settings = {
-                url: '/api/worker-requester-rating/list-by-target/?target=' + target + '&origin_type=' + origin_type,
+                url: '/api/ratings/list-by-target/?target=' + target + '&origin_type=' + origin_type,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
