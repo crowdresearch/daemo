@@ -26,7 +26,8 @@ from crowdsourcing.permissions.task import IsTaskOwner, IsQualified  # HasExceed
 from crowdsourcing.permissions.util import IsSandbox
 from crowdsourcing.serializers.project import ProjectSerializer
 from crowdsourcing.serializers.task import *
-from crowdsourcing.tasks import update_worker_cache, refund_task, send_return_notification_email
+from crowdsourcing.tasks import update_worker_cache, refund_task, send_return_notification_email, \
+    on_assignment_submitted
 from crowdsourcing.utils import get_model_or_none, hash_as_set, \
     get_review_redis_message, hash_task
 from crowdsourcing.validators.project import validate_account_balance
@@ -917,6 +918,7 @@ class TaskWorkerResultViewSet(viewsets.ModelViewSet):
                 task_worker.submitted_at = timezone.now()
                 task_worker.save()
                 task_worker.sessions.all().filter(ended_at__isnull=True).update(ended_at=timezone.now())
+                on_assignment_submitted.delay(task_worker.id)
                 # check_project_completed.delay(project_id=task_worker.task.project_id)
                 # #send_project_completed_email.delay(project_id=task_worker.task.project_id)
                 if task_status == TaskWorker.STATUS_SUBMITTED:
@@ -1057,6 +1059,7 @@ class ExternalSubmit(APIView):
                     task_worker_result.result = request.data
                     task_worker_result.save()
                     update_worker_cache.delay([task_worker.worker_id], constants.TASK_SUBMITTED)
+                    on_assignment_submitted.delay(task_worker.id)
                     # check_project_completed.delay(project_id=task_worker.task.project_id)
                     return Response(request.data, status=status.HTTP_200_OK)
                 else:
