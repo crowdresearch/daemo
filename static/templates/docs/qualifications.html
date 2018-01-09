@@ -1,0 +1,118 @@
+<div class="layout-row">
+  <div class="_main-docs">
+    <div style="padding: 32px; padding-top: 44px">
+      <h1>Qualifications</h1>
+      <div>Filters that can be applied to projects.</div>
+      <h2>Resource definition</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"id"</span>: integer, <br/>
+          <span>"name"</span>: string,<br/>
+          <span>"created_at"</span>: string,<br/>
+          <span>"updated_at"</span>: string
+        </div>
+        {{ '}' }}
+      </div>
+      <div class="_divider">&nbsp;</div>
+      <h1>Templates: list</h1>
+      <div>Lists the qualifications that you own.</div>
+      <h2>Request</h2>
+      <div class="_snippet">GET /v1/qualifications/</div>
+      <h2>Response</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"count"</span>: integer, <br/>
+          <span>"next"</span>: string,<br/>
+          <span>"previous"</span>: string,<br/>
+          <span>"results"</span>: [<br/>
+          <div style="padding-left: 24px; color: blue; font-weight: 500">Qualification Resource</div>
+          ]
+        </div>
+        {{ '}' }}
+      </div>
+      <div>
+        <table>
+          <thead>
+          <tr>
+            <th>Field Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>count</td>
+            <td>integer</td>
+            <td>The number of qualifications that this user owns.</td>
+          </tr>
+          <tr>
+            <td>next</td>
+            <td>string</td>
+            <td>URL to fetch next page.</td>
+          </tr>
+          <tr>
+            <td>previous</td>
+            <td>string</td>
+            <td>URL to fetch previous page.</td>
+          </tr>
+          <tr>
+            <td>results [ ]</td>
+            <td>list</td>
+            <td>The list of the qualifications.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="_divider">&nbsp;</div>
+      <h1>Qualifications: create</h1>
+      <div>Create a new qualification.</div>
+      <h2>Request</h2>
+      <div class="_snippet">POST /v1/qualifications/
+      </div>
+      <h2>Request Data</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"name"</span>: string <br/>
+        </div>
+        {{ '}' }}
+      </div>
+      <div>
+        <table>
+          <thead>
+          <tr>
+            <th>Field Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>name</td>
+            <td>string</td>
+            <td>A name for this qualification.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <h2>Response</h2>
+      <div class="_snippet">{{ '{' }}<span>"id"</span>: integer{{ '}' }}
+      </div>
+      <div class="_divider">&nbsp;</div>
+      <!--h1>Qualifications: items</h1>
+      <div>List the items that belong to this qualification.</div>
+      <h2>Request</h2>
+      <div class="_snippet">GET /v1/qualifications/<span>templateId</span>/items/
+      </div>
+      <h2>Response</h2>
+      <div class="_snippet">
+        [<br/>
+        <div style="padding-left: 24px; color: blue; font-weight: 500">QualificationItem Resource</div>
+        ]
+      </div-->
+    </div>
+  </div>
+  <div docs-navigation class="_docs-nav"></div>
+</div>

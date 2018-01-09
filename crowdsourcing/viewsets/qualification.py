@@ -1,19 +1,20 @@
 from django.db import transaction
-from rest_framework import status, viewsets
-from rest_framework.decorators import list_route
+from rest_framework import serializers
+from rest_framework import status, viewsets, mixins
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import serializers
-from crowdsourcing import constants
-from crowdsourcing.tasks import update_worker_cache
 
+from crowdsourcing import constants
 from crowdsourcing.models import Qualification, QualificationItem, \
     WorkerAccessControlEntry, RequesterAccessControlGroup
 from crowdsourcing.serializers.qualification import QualificationSerializer, QualificationItemSerializer, \
     WorkerACESerializer, RequesterACGSerializer
+from crowdsourcing.tasks import update_worker_cache
 
 
-class QualificationViewSet(viewsets.ModelViewSet):
+class QualificationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                           viewsets.GenericViewSet):
     queryset = Qualification.objects.all()
     serializer_class = QualificationSerializer
     permission_classes = [IsAuthenticated]
@@ -31,7 +32,14 @@ class QualificationViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.queryset.filter(owner=request.user)
         serializer = self.serializer_class(instance=queryset, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            data={"results": serializer.data, "count": len(serializer.data), "previous": None, "next": None},
+            status=status.HTTP_200_OK)
+
+    @detail_route(methods=['get'])
+    def items(self, request, *args, **kwargs):
+        qualification_items = self.get_object().items.all()
+        return Response(self.item_serializer_class(instance=qualification_items, many=True).data)
 
 
 class QualificationItemViewSet(viewsets.ModelViewSet):
@@ -57,7 +65,7 @@ class QualificationItemViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError(detail=serializer.errors)
 
     def list(self, request, *args, **kwargs):
-        queryset = self.queryset.filter(qualification_id=request.query_params.get('qualification', -1))
+        queryset = self.queryset.filter(qualification_id=request.query_params.get('qualification_id', -1))
         serializer = self.serializer_class(instance=queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

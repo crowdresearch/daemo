@@ -294,7 +294,7 @@
 
         function getQualificationItems(qualification_id) {
             var settings = {
-                url: '/api/qualification-items/?qualification=' + qualification_id,
+                url: '/api/qualification-items/?qualification_id=' + qualification_id,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);

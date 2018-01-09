@@ -320,6 +320,18 @@
             templateUrl: '/static/templates/docs/ratings.html'
         };
 
+        var docsQualifications = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/qualifications.html'
+        };
+
+        var docsQualificationItems = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/qualification-items.html'
+        };
+
         var docsOAuth2 = {
             controller: 'DocsController',
             controllerAs: 'docs',
@@ -489,6 +501,21 @@
                 url: '/ratings',
                 views: {
                     'content': docsRatings
+                },
+                authenticate: false
+            })
+
+            .state('docs.qualifications', {
+                url: '/qualifications',
+                views: {
+                    'content': docsQualifications
+                },
+                authenticate: false
+            })
+            .state('docs.qualification_items', {
+                url: '/qualification-items',
+                views: {
+                    'content': docsQualificationItems
                 },
                 authenticate: false
             })
