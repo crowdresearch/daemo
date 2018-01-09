@@ -18,10 +18,12 @@ from crowdsourcing.viewsets.task import TaskViewSet, TaskWorkerResultViewSet, Ta
 from crowdsourcing.viewsets.template import TemplateViewSet, TemplateItemViewSet, TemplateItemPropertiesViewSet
 from crowdsourcing.viewsets.user import UserViewSet, UserProfileViewSet, UserPreferencesViewSet, CountryViewSet, \
     CityViewSet
+from crowdsourcing.viewsets.webhooks import WebHookViewSet
 from mturk import views as mturk_views
 from mturk.viewsets import MTurkAssignmentViewSet, MTurkConfig, MTurkAccountViewSet
 
 router = SimpleRouter(trailing_slash=True)
+router.register(r'web-hooks', WebHookViewSet)
 router.register(r'projects', ProjectViewSet)
 router.register(r'tasks', TaskViewSet)
 router.register(r'assignments', TaskWorkerViewSet)

@@ -981,3 +981,50 @@ class WorkerBonus(TimeStampable):
 class ProjectPreview(TimeStampable):
     project = models.ForeignKey('Project')
     user = models.ForeignKey(User)
+
+
+class WebHook(TimeStampable):
+    SPEC = [
+        {
+            "event": "completed",
+            "object": "project",
+            "description": "Project picked",
+            "fields": ["project_id", "project_hash_id", "project_name"],
+            "is_active": True
+        },
+        {
+            "event": "submitted",
+            "object": "assignment",
+            "description": "Assignment submitted",
+            "fields": ["assignment_id", "task_id", "project_id", "worker_handle"],
+            "is_active": True
+        },
+        {
+            "event": "accepted",
+            "object": "assignment",
+            "description": "Assignment accepted",
+            "fields": ["assignment_id", "task_id", "project_id", "worker_handle"],
+            "is_active": False
+        },
+        {
+            "event": "skipped",
+            "object": "assignment",
+            "description": "Assignment skipped",
+            "fields": ["assignment_id", "task_id", "project_id", "worker_handle"],
+            "is_active": False
+        },
+    ]
+    name = models.CharField(max_length=128, null=True, blank=True)
+    url = models.CharField(max_length=256)
+    content_type = models.CharField(max_length=64, default='application/json')
+    event = models.CharField(max_length=16, db_index=True)
+    object = models.CharField(max_length=16, null=True, blank=True, db_index=True)
+    payload = JSONField(null=True, default={})
+    filters = JSONField(null=True, default={})
+    retry_count = models.SmallIntegerField(default=1)
+    is_active = models.BooleanField(default=True)
+    secret = models.CharField(max_length=128, null=True, blank=True)
+    owner = models.ForeignKey(User, related_name='web_hooks', null=True)
+
+    class Meta:
+        index_together = (('event', 'object'),)
