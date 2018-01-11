@@ -790,14 +790,13 @@ def post_webhook(hook, data, event, object_name, attempt=1):
         "Content-Type": "application/json"
     }
     try:
-        response = requests.post(url=hook.get('url'),
-                                 data=json.dumps(data),
-                                 headers=headers)
-        print(response.content)
+        requests.post(url=hook.url,
+                      data=json.dumps(data),
+                      headers=headers)
         return 'SUCCESS'
     except Exception as e:
         print(e)
-        if attempt < hook.get('retry_count', 1):
+        if attempt < hook.retry_count:
             time.sleep(1)
             post_webhook(hook, data, event, object_name, attempt + 1)
         return 'FAILURE'

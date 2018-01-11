@@ -10,12 +10,12 @@
         .controller('PreferencesController', PreferencesController);
 
     PreferencesController.$inject = ['$state', '$scope', '$window', '$mdToast', 'User', '$filter',
-        'Authentication', '$mdDialog'];
+        'Authentication', '$mdDialog', 'WebHook'];
 
     /**
      * @namespace PreferencesController
      */
-    function PreferencesController($state, $scope, $window, $mdToast, User, $filter, Authentication, $mdDialog) {
+    function PreferencesController($state, $scope, $window, $mdToast, User, $filter, Authentication, $mdDialog, WebHook) {
         var self = this;
         self.searchTextChange = searchTextChange;
         self.selectedItemChange = selectedItemChange;
@@ -28,7 +28,9 @@
         self.black_list_entries = [];
         self.workerGroups = [];
         self.groupMembers = [];
+        self.webHooks = [];
         self.workers = [];
+        self.editHook = editHook;
         self.newWorkerGroup = {};
         self.black_list = null;
         self.selectedGroupMember = null;
@@ -37,6 +39,7 @@
         self.addWorkerGroup = addWorkerGroup;
         self.addWorkerToGroup = addWorkerToGroup;
         self.removeWorkerFromGroup = removeWorkerFromGroup;
+        self.createWebHook = createWebHook;
         activate();
 
         $scope.$watch('preferences.workerGroup', function (newValue, oldValue) {
@@ -59,6 +62,7 @@
             else {
                 listWorkerGroups();
                 retrieveBlackList();
+                listWebHooks();
             }
 
         }
@@ -225,6 +229,20 @@
                 function success(data) {
                 }
             );
+        }
+
+        function createWebHook() {
+            $state.go('web_hook', {"pk": "new"});
+        }
+
+        function listWebHooks() {
+            WebHook.list().then(function success(response) {
+                    self.webHooks = response[0];
+                });
+        }
+
+        function editHook(pk) {
+            $state.go('web_hook', {"pk": pk});
         }
     }
 })();
