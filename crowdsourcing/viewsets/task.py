@@ -265,6 +265,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     filter_params = ['project_id', 'rerun_key', 'batch_id']
+    permission_classes = [IsAuthenticated, ]
 
     def list(self, request, *args, **kwargs):
         try:
@@ -568,7 +569,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 class TaskWorkerViewSet(viewsets.ModelViewSet):
     queryset = TaskWorker.objects.all()
     serializer_class = TaskWorkerSerializer
-    permission_classes = [IsQualified, ]
+    permission_classes = [IsAuthenticated, IsQualified]
 
     # permission_classes = [IsAuthenticated, HasExceededReservedLimit]
 
