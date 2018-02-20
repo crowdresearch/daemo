@@ -50,7 +50,7 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.Upd
         workers = models.TaskWorker.objects.values('worker').filter(
             submitted_at__gt=timezone.now() - timedelta(days=settings.WORKER_ACTIVITY_DAYS)).annotate(
             Count('worker', distinct=True))
-        return Response({"count": workers[0]['worker__count'] if len(workers) else 1})
+        return Response({"count": workers.count() if len(workers) else 1})
 
     @list_route(methods=['get'], permission_classes=[IsAuthenticated])
     def activity(self, request, *args, **kwargs):
