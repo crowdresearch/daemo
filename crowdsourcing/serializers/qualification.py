@@ -1,16 +1,17 @@
 from rest_framework import serializers
 
 from crowdsourcing import constants
-from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.models import Qualification, QualificationItem, WorkerAccessControlEntry, \
     RequesterAccessControlGroup
+from crowdsourcing.serializers.dynamic import DynamicFieldsModelSerializer
 from crowdsourcing.tasks import update_worker_cache
 
 
 class QualificationSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Qualification
-        fields = ('id', 'name', 'description')
+        fields = ('id', 'name', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at')
 
     def create(self, owner, *args, **kwargs):
         return Qualification.objects.create(owner=owner, **self.validated_data)

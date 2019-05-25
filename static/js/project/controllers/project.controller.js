@@ -590,7 +590,7 @@
                     var file = files[i];
 
                     Upload.upload({
-                        url: '/api/file/',
+                        url: '/api/files/',
                         //fields: {'username': $scope.username},
                         file: file
                     }).progress(function (evt) {

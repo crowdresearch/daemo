@@ -308,6 +308,30 @@
             templateUrl: '/static/templates/docs/template-items.html'
         };
 
+        var docsPayments = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/payments.html'
+        };
+
+        var docsRatings = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/ratings.html'
+        };
+
+        var docsQualifications = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/qualifications.html'
+        };
+
+        var docsQualificationItems = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/qualification-items.html'
+        };
+
         var docsOAuth2 = {
             controller: 'DocsController',
             controllerAs: 'docs',
@@ -463,6 +487,35 @@
                 url: '/template-items',
                 views: {
                     'content': docsTemplateItems
+                },
+                authenticate: false
+            })
+            .state('docs.payments', {
+                url: '/payments',
+                views: {
+                    'content': docsPayments
+                },
+                authenticate: false
+            })
+            .state('docs.ratings', {
+                url: '/ratings',
+                views: {
+                    'content': docsRatings
+                },
+                authenticate: false
+            })
+
+            .state('docs.qualifications', {
+                url: '/qualifications',
+                views: {
+                    'content': docsQualifications
+                },
+                authenticate: false
+            })
+            .state('docs.qualification_items', {
+                url: '/qualification-items',
+                views: {
+                    'content': docsQualificationItems
                 },
                 authenticate: false
             })

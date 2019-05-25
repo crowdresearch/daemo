@@ -1,0 +1,57 @@
+<div class="layout-row">
+    <div class="_main-docs">
+        <div style="padding: 32px; padding-top: 44px">
+            <h1>Payments</h1>
+            <div>Used for depositing money to your Daemo account.</div>
+            <h2>Resource definition</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"id"</span>: integer, <br/>
+                    <span>"amount"</span>: string,<br/>
+                    <span>"created_at"</span>: string,<br/>
+                    <span>"updated_at"</span>: string
+                </div>
+                {{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+            <h1>Payments: create</h1>
+            <div>Create a new payment/charge.</div>
+            <h2>Request</h2>
+            <div class="_snippet">POST /v1/payments/
+            </div>
+            <h2>Request Data</h2>
+            <div class="_snippet">
+                {{ '{' }} <br/>
+                <div style="padding-left: 16px">
+                    <span>"amount"</span>: integer <br/>
+                </div>
+                {{ '}' }}
+            </div>
+            <div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>amount</td>
+                        <td>integer</td>
+                        <td>Amount to be deposited in USD.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h2>Response</h2>
+            <div class="_snippet">{{ '{' }}<span>"id"</span>: integer{{ '}' }}
+            </div>
+            <div class="_divider">&nbsp;</div>
+
+        </div>
+    </div>
+    <div docs-navigation class="_docs-nav"></div>
+</div>

@@ -1,0 +1,181 @@
+<div class="layout-row">
+  <div class="_main-docs">
+    <div style="padding: 32px; padding-top: 44px">
+      <h1>Qualification Items</h1>
+      <div>Qualification item definitions which will be used to filter users at runtime.</div>
+      <h2>Resource definition</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"id"</span>: integer, <br/>
+          <span>"scope"</span>: string,<br/>
+          <span>"qualification"</span>: integer,<br/>
+          <span>"expression"</span>:
+          <div>
+            {
+            <div style="padding-left: 16px">
+              <span>"attribute"</span>: string, <br/>
+              <span>"operator"</span>: string, <br/>
+              <span>"value"</span>: string<br/>
+            </div>
+
+            }
+          </div>
+        </div>
+        {{ '}' }}
+      </div>
+      <div class="_divider">&nbsp;</div>
+      <h1>Qualification Items: list</h1>
+      <div>Lists the items by qualification ID.</div>
+      <h2>Request</h2>
+      <div class="_snippet">GET /v1/qualification-items/?qualification_id={QUALIFICATION_ID}</div>
+      <h2>Response</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"count"</span>: integer, <br/>
+          <span>"next"</span>: string,<br/>
+          <span>"previous"</span>: string,<br/>
+          <span>"results"</span>: [<br/>
+          <div style="padding-left: 24px; color: blue; font-weight: 500">Qualification Item Resource</div>
+          ]
+        </div>
+        {{ '}' }}
+      </div>
+      <div>
+        <table>
+          <thead>
+          <tr>
+            <th>Field Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>count</td>
+            <td>integer</td>
+            <td>The number of qualifications that exist in this qualification.</td>
+          </tr>
+          <tr>
+            <td>next</td>
+            <td>string</td>
+            <td>URL to fetch next page.</td>
+          </tr>
+          <tr>
+            <td>previous</td>
+            <td>string</td>
+            <td>URL to fetch previous page.</td>
+          </tr>
+          <tr>
+            <td>results [ ]</td>
+            <td>list</td>
+            <td>The list qualification items.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="_divider">&nbsp;</div>
+      <h1>Qualification Items: retrieve</h1>
+      <div>Retrieve a qualification item by ID.</div>
+      <h2>Request</h2>
+      <div class="_snippet">GET /v1/qualification-items/<span>qualificationItemId</span>/
+      </div>
+      <h2>Response</h2>
+      <div>
+        This method will return a <span style="color: blue; font-weight: 500">Qualification Item Resource</span>.
+      </div>
+      <div class="_divider">&nbsp;</div>
+      <h1>Qualification Items: create</h1>
+      <div>Create a new qualification item.</div>
+      <h2>Request</h2>
+      <div class="_snippet">POST /v1/qualification-items/
+      </div>
+      <h2>Request Data</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"scope"</span>: string, <br/>
+          <span>"qualification"</span>: integer, <br/>
+          <span>"expression"</span>:
+          <div>
+            {
+            <div style="padding-left: 16px">
+              <span>"attribute"</span>: string, <br/>
+              <span>"operator"</span>: string, <br/>
+              <span>"value"</span>: string <br/>
+            </div>
+
+            }
+          </div>
+
+        </div>
+        {{ '}' }}
+      </div>
+      <div>
+        <table>
+          <thead>
+          <tr>
+            <th>Field Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>scope</td>
+            <td>string</td>
+            <td>Scope of this qualification, possible values are "task" and "project".</td>
+          </tr>
+          <tr>
+            <td>qualification</td>
+            <td>integer</td>
+            <td>Id of the qualification this item is being added to.
+            </td>
+          </tr>
+
+          <tr>
+            <td>expression</td>
+            <td>JSON object</td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td>expression.attribute</td>
+            <td>string</td>
+            <td>A predefined value for the item attribute, possible values are "assignment_id", "worker_group".
+            </td>
+          </tr>
+          <tr>
+            <td>expression.operator</td>
+            <td>string</td>
+            <td>The operator which is used to evaluate the attribute and value, possible values "in", "not_in",
+              "contains".
+            </td>
+          </tr>
+
+          <tr>
+            <td>expression.value</td>
+            <td>string</td>
+            <td>Value of the item, varies depending on what the attribute is, it can be a worker group id
+              or a column in the spreadsheet which contains the assignment ids comma-separated.
+            </td>
+          </tr>
+
+          </tbody>
+        </table>
+      </div>
+      <h2>Response</h2>
+      <div class="_snippet">{{ '{' }}<span>"id"</span>: integer{{ '}' }}
+      </div>
+      <div class="_divider">&nbsp;</div>
+      <h1>Qualification Items: destroy</h1>
+      <div>Delete a qualification item by ID.</div>
+      <h2>Request</h2>
+      <div class="_snippet">DELETE /v1/qualification-items/<span>qualificationItemId</span>/</div>
+      <h2>Response</h2>
+      <div>The response for this request will be empty.</div>
+    </div>
+  </div>
+  <div docs-navigation class="_docs-nav"></div>
+</div>

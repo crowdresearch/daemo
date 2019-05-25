@@ -142,7 +142,7 @@
 
         function downloadResults(params) {
             var settings = {
-                url: '/api/file/download-results/',
+                url: '/api/files/download-results/',
                 method: 'GET',
                 params: params
             };

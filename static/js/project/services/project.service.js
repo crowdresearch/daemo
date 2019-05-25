@@ -257,7 +257,7 @@
 
         function createQualificationItem(data) {
             var settings = {
-                url: '/api/qualification-item/',
+                url: '/api/qualification-items/',
                 method: 'POST',
                 data: data
             };
@@ -266,7 +266,7 @@
 
         function deleteQualificationItem(pk) {
             var settings = {
-                url: '/api/qualification-item/' + pk + '/',
+                url: '/api/qualification-items/' + pk + '/',
                 method: 'DELETE'
             };
             return HttpService.doRequest(settings);
@@ -274,7 +274,7 @@
 
         function updateQualificationItem(pk, expression) {
             var settings = {
-                url: '/api/qualification-item/' + pk + '/',
+                url: '/api/qualification-items/' + pk + '/',
                 method: 'PUT',
                 data: {
                     expression: expression
@@ -285,7 +285,7 @@
 
         function createQualification(data) {
             var settings = {
-                url: '/api/qualification/',
+                url: '/api/qualifications/',
                 method: 'POST',
                 data: data
             };
@@ -294,7 +294,7 @@
 
         function getQualificationItems(qualification_id) {
             var settings = {
-                url: '/api/qualification-item/?qualification=' + qualification_id,
+                url: '/api/qualification-items/?qualification_id=' + qualification_id,
                 method: 'GET'
             };
             return HttpService.doRequest(settings);
