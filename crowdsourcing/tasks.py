@@ -1,11 +1,13 @@
 from __future__ import division
 
 import json
+import time
 from collections import OrderedDict
-from datetime import timedelta
+from datetime import timedelta, datetime
 from decimal import Decimal, ROUND_UP
 
 import numpy as np
+import requests
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import connection, transaction
@@ -624,10 +626,10 @@ def check_project_completed(project_id):
     cursor = connection.cursor()
     cursor.execute(query, params)
     remaining_count = cursor.fetchall()[0][0] if cursor.rowcount > 0 else 0
-    print(remaining_count)
     if remaining_count == 0:
         with transaction.atomic():
             project = models.Project.objects.select_for_update().get(id=project_id)
+            on_project_completed(project.id)
             if project.is_prototype:
                 feedback = project.comments.all()
                 if feedback.count() > 0 and feedback.filter(ready_for_launch=True).count() / feedback.count() < 0.66:
@@ -733,3 +735,68 @@ def post_to_discourse(project_id):
             except Exception as e:
                 print(e)
                 print 'failed to update post'
+
+
+@celery_app.task(ignore_result=True)
+def on_assignment_submitted(pk):
+    return on_assignment_event(pk, "submitted")
+
+
+@celery_app.task(ignore_result=True)
+def on_assignment_skipped(pk):
+    return on_assignment_event(pk, "skipped")
+
+
+@celery_app.task(ignore_result=True)
+def on_assignment_accepted(pk):
+    return on_assignment_event(pk, "accepted")
+
+
+def on_assignment_event(pk, event):
+    task_worker = models.TaskWorker.objects.prefetch_related('task__project').filter(id=pk).first()
+    if task_worker is not None:
+        object_name = "assignment"
+        hooks = task_worker.task.project.owner.web_hooks.filter(event=event, object=object_name, is_active=True)
+        data = {
+            "at": datetime.utcnow().isoformat(),
+            "worker_handle": task_worker.worker.profile.handle,
+            "assignment_id": task_worker.id,
+            "project_id": task_worker.task.project.id
+        }
+        for h in hooks:
+            post_webhook(hook=h, data=data, event=event, object_name=object_name)
+
+
+@celery_app.task(ignore_result=True)
+def on_project_completed(pk):
+    project = models.Project.objects.filter(id=pk).first()
+    if project is not None:
+        event = "completed"
+        object_name = "project"
+        hooks = project.owner.web_hooks.filter(event=event, object=object_name, is_active=True)
+        data = {
+            "at": datetime.utcnow().isoformat(),
+            "project_id": project.id,
+            "project_name": project.name
+        }
+        for h in hooks:
+            post_webhook(hook=h, data=data, event=event, object_name=object_name)
+    return 'SUCCESS'
+
+
+def post_webhook(hook, data, event, object_name, attempt=1):
+    headers = {
+        "X-Daemo-Event": "{}.{}".format(object_name, event),
+        "Content-Type": "application/json"
+    }
+    try:
+        requests.post(url=hook.url,
+                      data=json.dumps(data),
+                      headers=headers)
+        return 'SUCCESS'
+    except Exception as e:
+        print(e)
+        if attempt < hook.retry_count:
+            time.sleep(1)
+            post_webhook(hook, data, event, object_name, attempt + 1)
+        return 'FAILURE'

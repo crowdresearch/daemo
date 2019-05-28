@@ -250,6 +250,12 @@
             controllerAs: 'taskfeed'
         };
 
+        var webHookDetail = {
+            templateUrl: '/static/templates/web-hooks/detail.html',
+            controller: 'WebHookController',
+            controllerAs: 'webhook'
+        };
+
         var projectPreview = {
             templateUrl: '/static/templates/project/preview.html',
             controller: 'TaskFeedController',
@@ -306,6 +312,13 @@
             controller: 'DocsController',
             controllerAs: 'docs',
             templateUrl: '/static/templates/docs/template-items.html'
+        };
+
+
+        var docsWebHooks = {
+            controller: 'DocsController',
+            controllerAs: 'docs',
+            templateUrl: '/static/templates/docs/web-hooks.html'
         };
 
         var docsOAuth2 = {
@@ -463,6 +476,13 @@
                 url: '/template-items',
                 views: {
                     'content': docsTemplateItems
+                },
+                authenticate: false
+            })
+            .state('docs.web_hooks', {
+                url: '/web-hooks',
+                views: {
+                    'content': docsWebHooks
                 },
                 authenticate: false
             })
@@ -753,6 +773,18 @@
                 },
                 authenticate: true
             })
+
+            .state('web_hook', {
+                url: '/web-hooks/:pk',
+                title: 'Web Hooks',
+                views: {
+                    'navbar': navbar,
+                    'content': webHookDetail,
+                    'chat': overlay
+                },
+                authenticate: true
+            })
+
 
             .state('root', {
                 url: '/',

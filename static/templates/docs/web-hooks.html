@@ -1,0 +1,175 @@
+<div class="layout-row">
+  <div class="_main-docs">
+    <div style="padding: 32px; padding-top: 44px">
+      <h1>Web Hooks</h1>
+      <div>Content-Type will always be set to <i>"application/json"</i>, additionally a header <i>"X-Daemo-Event"</i> will be set to
+        the event/object name for identification.
+      </div>
+      <h2>Resource definition</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"id"</span>: integer, <br/>
+          <span>"name"</span>: string,<br/>
+          <span>"url"</span>: string,<br/>
+          <span>"event"</span>: string,<br/>
+          <span>"is_active"</span>: boolean,<br/>
+          <span>"object"</span>: string
+        </div>
+        {{ '}' }}
+      </div>
+      <div class="_divider">&nbsp;</div>
+      <h1>Web Hooks: list</h1>
+      <div>Lists the web hooks that you own.</div>
+      <h2>Request</h2>
+      <div class="_snippet">GET /v1/web-hooks/</div>
+      <h2>Response</h2>
+      <div class="_snippet">
+        [<br/>
+        <div style="padding-left: 24px; color: blue; font-weight: 500">WebHook Resource</div>
+        ]
+      </div>
+
+      <div class="_divider">&nbsp;</div>
+      <h1>Web Hooks: retrieve</h1>
+      <div>Retrieve a web hook by ID.</div>
+      <h2>Request</h2>
+      <div class="_snippet">GET /v1/web-hooks/<span>webHookId</span>/
+      </div>
+      <h2>Response</h2>
+      <div>
+        This method will return a <span style="color: blue; font-weight: 500">WebHook Resource</span>.
+      </div>
+      <div class="_divider">&nbsp;</div>
+      <h1>Web Hooks: create</h1>
+      <div>Create a new web hook.</div>
+      <h2>Request</h2>
+      <div class="_snippet">POST /v1/web-hooks/
+      </div>
+      <h2>Request Data</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"name"</span>: string, <br/>
+          <span>"url"</span>: string, <br/>
+          <span>"event"</span>: string, <br/>
+          <span>"object"</span>: string, <br/>
+          <span>"is_active"</span>: boolean <br/>
+        </div>
+        {{ '}' }}
+      </div>
+      <div>
+        <table>
+          <thead>
+          <tr>
+            <th>Field Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>name</td>
+            <td>string</td>
+            <td>A name for this web hook.</td>
+          </tr>
+          <tr>
+            <td>url</td>
+            <td>string</td>
+            <td>A URL to post the event payload to.
+            </td>
+          </tr>
+
+          <tr>
+            <td>event</td>
+            <td>string</td>
+            <td>Event to be subscribed to, allowed values are "submitted", "completed".
+            </td>
+          </tr>
+
+          <tr>
+            <td>object</td>
+            <td>string</td>
+            <td>The object/resource the event is occurring for, allowed values are "project", "assignment".
+            </td>
+          </tr>
+
+          <tr>
+            <td>is_active</td>
+            <td>boolean</td>
+            <td>Daemo will post these events as long as this field is set to true.
+            </td>
+          </tr>
+
+          </tbody>
+        </table>
+      </div>
+      <h2>Response</h2>
+      <div class="_snippet">{{ '{' }}<span>"id"</span>: integer{{ '}' }}
+      </div>
+      <div class="_divider">&nbsp;</div>
+      <h1>Web Hooks: destroy</h1>
+      <div>Delete a web hook by ID.</div>
+      <h2>Request</h2>
+      <div class="_snippet">DELETE /v1/web-hooks/<span>webHookId</span>/</div>
+      <h2>Response</h2>
+      <div>The response for this request will be empty.</div>
+
+
+      <div class="_divider">&nbsp;</div>
+      <h1>Web Hooks: Examples</h1>
+      <div>Here's a list of possible configurations.</div>
+      <h2>Assignment Submitted</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"name"</span>: "My Sample Web Hook", <br/>
+          <span>"url"</span>: "http://localhost/notifications/assignments/", <br/>
+          <span>"event"</span>: "submitted", <br/>
+          <span>"object"</span>: "assignment", <br/>
+          <span>"is_active"</span>: true <br/>
+        </div>
+        {{ '}' }}
+      </div>
+      <h2>Project Completed</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"name"</span>: "My Sample Web Hook #2", <br/>
+          <span>"url"</span>: "http://localhost/notifications/projects/", <br/>
+          <span>"event"</span>: "completed", <br/>
+          <span>"object"</span>: "project", <br/>
+          <span>"is_active"</span>: true <br/>
+        </div>
+        {{ '}' }}
+      </div>
+
+      <div class="_divider">&nbsp;</div>
+      <h1>Web Hooks: Posted payload format</h1>
+      <div></div>
+      <h2>Assignment Submitted</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"at"</span>: string, <br/>
+          <span>"worker_handle"</span>: string, <br/>
+          <span>"assignment_id"</span>: integer, <br/>
+          <span>"project_id"</span>: integer
+        </div>
+        {{ '}' }}
+      </div>
+      <h2>Project Completed</h2>
+      <div class="_snippet">
+        {{ '{' }} <br/>
+        <div style="padding-left: 16px">
+          <span>"at"</span>: string, <br/>
+          <span>"project_name"</span>: string, <br/>
+          <span>"project_id"</span>: integer
+        </div>
+        {{ '}' }}
+      </div>
+
+    </div>
+  </div>
+  <div docs-navigation class="_docs-nav"></div>
+</div>

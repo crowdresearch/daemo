@@ -1,0 +1,69 @@
+<div class="md-whiteframe-z1 _main-content _middle-content">
+  <div layout="row" class="layout-align-start-center _content-nav">
+    <md-button ui-sref="requester_settings" class="_nav-actions">
+      <md-icon md-font-set="material-icons">chevron_left</md-icon>
+    </md-button>
+    <div>
+      <div class="_nav-title _truncated-text"
+           style="">{{ webhook.obj.id? 'Edit webhook' : 'Create webhook' }}
+      </div>
+    </div>
+
+
+    <div class="_content-actions">
+
+
+    </div>
+  </div>
+
+  <div class="_main-content-body">
+
+
+    <div style="margin-left: 32px;" layout-sm="column" layout-gt-sm="row">
+      <md-input-container style="min-width: 50%">
+        <label>Name</label>
+        <textarea ng-model="webhook.obj.name"
+                  autocomplete="off"></textarea>
+      </md-input-container>
+
+    </div>
+
+    <div>
+      <div class="_authoring_content">
+        <div class="_step-name" style="padding-top: 16px">
+              Select an event you want to subscribe to:
+            </div>
+        <md-input-container>
+          <md-radio-group ng-model="webhook.eventObj">
+            <md-radio-button value="assignment.submitted">Assignment Submitted
+            </md-radio-button>
+            <md-radio-button value="project.completed">Project Completed
+            </md-radio-button>
+          </md-radio-group>
+        </md-input-container>
+      </div>
+      <div style="margin-left: 32px" layout-sm="column" layout-gt-sm="row">
+        <md-input-container class="" style="min-width: 50%">
+          <label>Payload URL</label>
+          <textarea ng-model="webhook.obj.url"
+                    autocomplete="off"></textarea>
+        </md-input-container>
+      </div>
+      <div class="_authoring_content">We will send the data as a <i>POST</i> request with Content-Type set to <i>application/json</i>.
+        More information can be found in our <a ui-sref="docs.web_hooks">API Docs</a>.</div>
+      <div style="margin-left: 16px;">
+        <md-switch ng-model="webhook.obj.is_active">Active
+      </div>
+    </div>
+
+    <div class="_meta-info" layout="column" style="outline: none">
+      <div class="layout-row layout-align-end-center"
+           style="padding-left: 16px; padding-right: 16px; padding-bottom: 8px">
+        <md-button ng-click="webhook.create()"
+                   class="md-accent">Save
+        </md-button>
+      </div>
+    </div>
+
+  </div>
+</div>

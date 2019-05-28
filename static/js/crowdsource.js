@@ -35,7 +35,8 @@ angular
         'crowdsource.user',
         'crowdsource.helpers',
         'crowdsource.message',
-        'crowdsource.docs'
+        'crowdsource.docs',
+        'crowdsource.web-hooks'
 
     ]);
 
