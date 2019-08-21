@@ -698,6 +698,9 @@ def post_to_discourse(project_id):
 
             if topic is not None:
                 url = '/t/%s/%d' % (topic['topic_slug'], topic['topic_id'])
+
+                client.update_topic(url,'visible','false')
+
                 instance.discussion_link = url
                 instance.topic_id = topic['topic_id']
                 instance.post_id = topic['id']
