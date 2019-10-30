@@ -27,7 +27,7 @@ psycopg2==2.7.3
 pyOpenSSL==17.2.0
 pycrypto==2.6.1
 redis==2.10.5
-requests==2.18.2
+requests==2.20.0
 sendgrid==1.5.13
 six==1.10.0
 static3==0.7.0
