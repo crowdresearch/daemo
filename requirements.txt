@@ -1,5 +1,5 @@
 boto==2.38.0
-celery==4.0.2
+celery==5.2.2
 cffi==1.10.0
 # Crypto==1.4.1
 # cryptography==1.7.2
